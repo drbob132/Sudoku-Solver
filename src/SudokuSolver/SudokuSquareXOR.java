@@ -6,7 +6,7 @@ package SudokuSolver;
  *
  */
 public class SudokuSquareXOR {
-	int number;
-	SudokuSquare square1;
-	SudokuSquare square2;
+	private int number;
+	private SudokuSquare square1;
+	private SudokuSquare square2;
 }

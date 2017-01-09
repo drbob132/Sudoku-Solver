@@ -3,9 +3,9 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 public class SudokuSquare {
-	int value = 0;
-	SudokuRow row;
-	SudokuColumn column;
-	SudokuBlock block;
-	ArrayList<SudokuSquareXOR> conditions;
+	private int value = 0;
+	private SudokuRow row;
+	private SudokuColumn column;
+	private SudokuBlock block;
+	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to 9 of these
 }
