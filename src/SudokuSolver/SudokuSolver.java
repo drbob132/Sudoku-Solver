@@ -1,5 +1,5 @@
 /**
- * Solves a given sudoku
+ * Solves a given sudoku, using basic rules and binary XOR conditions.
  * 
  * @author drbob132
  */
