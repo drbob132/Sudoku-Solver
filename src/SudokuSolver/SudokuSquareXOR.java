@@ -17,17 +17,21 @@ public class SudokuSquareXOR {
 		number = num;
 	}
 	
-	public void checkCondition(){
+	public void checkCondition() throws SudokuException{
 		//If square is not empty or can not be the number
 		//Checking isEmpty first, as it's lower overhead.
-		if(!square1.isEmpty()){
-			setSquare(square2);
-		}else if(!square2.isEmpty()){
-			setSquare(square1);
-		}else if(!square1.canBe(number)){
-			setSquare(square2);
-		}else if(!square2.canBe(number)){
-			setSquare(square1);
+		try{
+			if(!square1.isEmpty()){
+				setSquare(square2);
+			}else if(!square2.isEmpty()){
+				setSquare(square1);
+			}else if(!square1.canBe(number)){
+				setSquare(square2);
+			}else if(!square2.canBe(number)){
+				setSquare(square1);
+			}
+		}catch(SudokuException problem){
+			throw problem;
 		}
 	}
 	
@@ -40,7 +44,7 @@ public class SudokuSquareXOR {
 		if(square.isEmpty()){
 			square.set(number);
 		}else{
-			throw new SudokuException("Tried to set square (" + square.getx() + ", " + square.gety() + ") with " + number);
+			throw new SudokuException("Tried to set square (" + /*square.getx() + ", " + square.gety() +*/ ") with " + number);
 		}
 	}
 }
