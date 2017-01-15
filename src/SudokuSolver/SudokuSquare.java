@@ -8,4 +8,5 @@ public class SudokuSquare {
 	private SudokuColumn column;
 	private SudokuBlock block;
 	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to 9 of these
+	
 }

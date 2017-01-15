@@ -42,4 +42,5 @@ public class SudokuSquareXOR {
 		}else{
 			throw new SudokuException("Tried to set square (" + square.getx() + ", " + square.gety() + ") with " + number);
 		}
+	}
 }
