@@ -3,18 +3,28 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 public class SudokuSquare {
-	private int value = 0;
+	private int value;
 	private SudokuRow row;
 	private SudokuColumn column;
 	private SudokuBlock block;
 	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to 9 of these
 	
-	public SudokuSquare(SudokuRow row, SudokuColumn column, SudokuBlock block){
-		this.row = row;
-		this.column = column;
-		this.block = block;
+	public SudokuSquare(int value){
+		this.value = value;
 	}
 
+	public void setRow(SudokuRow row){
+		this.row = row;
+	}
+	
+	public void setColumn(SudokuColumn column){
+		this.column = column;
+	}
+	
+	public void setBlock(SudokuBlock block){
+		this.block = block;
+	}
+	
 	public Boolean isEmpty(){
 		if(value == 0){
 			return true;
@@ -34,6 +44,8 @@ public class SudokuSquare {
 	}
 	
 	public void set(int val){
-		
+		//if already set, throw error
+		//set value
+		//check conditions
 	}
 }
