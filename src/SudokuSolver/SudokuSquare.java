@@ -1,3 +1,12 @@
+/**
+ * Contains a value for Sudoku
+ * Checks the rules in respect to this square and it's row/column/block.
+ * Holds SudokuSquareXOR conditions that will be checked once they are fulfilled.
+ * @author drbob132
+ * @version 0.1
+ * @date 2/23/2017
+ */
+
 package SudokuSolver;
 
 import java.util.ArrayList;
@@ -7,45 +16,107 @@ public class SudokuSquare {
 	private SudokuRow row;
 	private SudokuColumn column;
 	private SudokuBlock block;
-	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to 9 of these
+	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to one of each number
+
+	/**
+	 * Initializes a square as empty
+	 */
+	public SudokuSquare(){
+		this.value = 0;
+	}
 	
+	/**
+	 * Initializes a square with a value
+	 * @param value
+	 */
 	public SudokuSquare(int value){
 		this.value = value;
 	}
 
+	/**
+	 * @param row
+	 */
 	public void setRow(SudokuRow row){
 		this.row = row;
 	}
 	
+	/**
+	 * @
+	 * @param column
+	 */
 	public void setColumn(SudokuColumn column){
 		this.column = column;
 	}
 	
+	/**
+	 * Assigns Square to block. 
+	 * Must be called after constructor.
+	 * @param block Block that contains this Square
+	 */
 	public void setBlock(SudokuBlock block){
 		this.block = block;
 	}
 	
+	/**
+	 * @return If the square contains a value
+	 */
 	public Boolean isEmpty(){
-		if(value == 0){
+		if(value <= 0){
 			return true;
 		}else{
 			return false;
 		}
 	}
 	
-	public Boolean canBe(int val){
+	/**
+	 * Checks to see if the Square can contain the value, according to the rules of sudoku.
+	 * @param value Value to check
+	 * @return If the Square can contain the value, according to the rules of sudoku.
+	 * @predcondition Row, Block & Column must be set
+	 */
+	public Boolean canBe(int value){
 		if(!this.isEmpty()){
 			return false;
 		}
-		if(row.contains(val) || column.contains(val) || block.contains(val)){
+		if(row.contains(value) || column.contains(value) || block.contains(value)){
 			return false;
 		}
 		return true;
 	}
 	
-	public void set(int val){
+	/**
+	 * @return value contained by this square
+	 */
+	public int getValue(){
+		return value;
+	}
+	
+	/**
+	 * Sets the square to the given value, then checks any conditions that may be active
+	 * @param value value to set Square to
+	 * @throws SudokuException when Square already contains a value
+	 */
+	public void set(int value) throws SudokuException{
 		//if already set, throw error
+		if(!isEmpty()){
+			throw new SudokuException("Tried to set square " + /*square.getx() + ", " + square.gety() +*/ "with " + value + ", but already contains " + getValue());
+		}
+		
 		//set value
-		//check conditions
+		this.value = value;
+		
+		//then check conditions, and kill them
+		for(SudokuSquareXOR condition : conditions){
+			condition.checkCondition();
+			conditions.remove(condition);
+		}
+	}
+
+	public void addCondition(SudokuSquareXOR condition){
+		conditions.add(condition);
+	}
+	
+	public void removeCondition(SudokuSquareXOR condition){
+		conditions.remove(condition);
 	}
 }
