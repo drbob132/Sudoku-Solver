@@ -105,20 +105,40 @@ public class Sudoku {
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
 		int index;
 		
-		for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
-			for(int j=0; j < SUDOKU_SIDE_LENGTH; j++){
-				squareTemp[j] = squares[i*SUDOKU_BLOCK_LENGTH];
+		for(int block=0; block < SUDOKU_SIDE_LENGTH; block++){
+			for(int pos=0; pos < SUDOKU_SIDE_LENGTH; pos++){
+				index = blockSquareIndex(block, pos);
+				tempArray[pos] = squares[index];
 			}
-			blocks[i] = new SudokuBlock(squareTemp);
+			blocks[block] = new SudokuBlock(tempArray);
 		}
 	}
 	
+	private int blockSquareIndex(int block, int position){
+		int index;
+		int blockOffset;
+		int rowOffset;
+		//get the index of the starting index of a block
+		//Magic -- 9x9 -> {0, 3, 6, 27, 30, 33, 54, 57, 60}
+		//{+0,+3,+6} & {+0,+27,+54}
+		blockOffset = block%SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH + block/SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH*SUDOKU_SIDE_LENGTH;
+		
+		//get the index of the row
+		//{+0,+9,+18}
+		rowOffset = position/SUDOKU_BLOCK_LENGTH*SUDOKU_SIDE_LENGTH;
+		
+		//get position in block plus offsets
+		index = position%SUDOKU_BLOCK_LENGTH + rowOffset + blockOffset;
+		return index;
+	}
 	
 	/**
 	 * Prints out the whole Sudoku as a string. 
 	 */
 	public String toString(){
-		return "| | | |/n| | | |/n| | | |";
+		String sudokuString = "";
+		
+		return sudokuString; //"| | | |/n| | | |/n| | | |";
 	}
 	
 }
