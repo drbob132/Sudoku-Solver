@@ -138,7 +138,12 @@ public class Sudoku {
 	public String toString(){
 		String sudokuString = "";
 		
-		return sudokuString; //"| | | |/n| | | |/n| | | |";
+		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
+			sudokuString += rows[i].toString();
+			sudokuString += '\n';
+		}
+		
+		return sudokuString; //"| | | |\n| | | |\n| | | |";
 	}
 	
 }

@@ -25,4 +25,21 @@ public class SudokuRow {
 		return false;
 	}
 	
+	public String toString(){
+		String rowString = "|";
+		char valueChar;
+		for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
+			if(squares[i].getValue() <= 0)
+				//if empty, print blank
+				valueChar = ' ';
+			else{
+				valueChar = '0';
+				valueChar += squares[i].getValue();
+			}
+			rowString += valueChar;
+			rowString += '|';
+		}
+		return rowString;
+	}
+	
 }
