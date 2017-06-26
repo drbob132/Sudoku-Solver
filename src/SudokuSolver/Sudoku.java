@@ -3,11 +3,12 @@
  * Also solves them, which is what this is built for!
  * @author drbob132
  * @version 0.1
- * @date 2/23/2017
+ * @date 6/26/2017
  */
 
 package SudokuSolver;
 
+import java.util.Arrays;
 
 public class Sudoku {
 	public static final int SUDOKU_BLOCK_LENGTH = 3;
@@ -31,7 +32,7 @@ public class Sudoku {
 	
 	/**
 	 * Populates a Sudoku.
-	 * @param numbers Takes an int[] of 89 digits. All must be from 1 to 9, or 0 for empty squares.
+	 * @param numbers Takes an int[] of 89 (9^2) digits. All must be from 1 to 9, or 0 for empty squares.
 	 * |000102|030405|060708|
 	 * |091011|121314|151617|
 	 * |181920|212223|242526|
@@ -75,20 +76,41 @@ public class Sudoku {
 	}
 
 	private void populateRows(){
-		
+		SudokuSquare[] tempArray;
+		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
+			tempArray = Arrays.copyOfRange(squares, i*SUDOKU_SIDE_LENGTH, (i+1)*SUDOKU_SIDE_LENGTH);
+			rows[i] = new SudokuRow(tempArray);
+		}
 	}
 	
 	private void populateColumns(){
+		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
+		int index;
 		
+		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
+			for(int j=0; j<SUDOKU_SIDE_LENGTH; j++){
+				index = i + j*SUDOKU_SIDE_LENGTH;
+				tempArray[j] = squares[index];
+			}
+			columns[i] = new SudokuColumn(Arrays.copyOf(tempArray, tempArray.length));
+		}
 	}
 
+	/*
+	 * |0 1 2|
+	 * |3 4 5|
+	 * |6 7 8|
+	 */
 	private void populateBlocks(){
-//		for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
-//			for(int j=0; j < SUDOKU_SIDE_LENGTH; j++){
-//				squareTemp[j] = squares[i*SUDOKU_BLOCK_LENGTH];
-//			}
-//			blocks[i] = new SudokuBlock(squareTemp);
-//		}
+		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
+		int index;
+		
+		for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
+			for(int j=0; j < SUDOKU_SIDE_LENGTH; j++){
+				squareTemp[j] = squares[i*SUDOKU_BLOCK_LENGTH];
+			}
+			blocks[i] = new SudokuBlock(squareTemp);
+		}
 	}
 	
 	
