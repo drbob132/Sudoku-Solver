@@ -47,7 +47,6 @@ public class Sudoku {
 			throw new SudokuException("Too many numbers given.");
 		}
 		
-		
 		populateSquares(numbers);
 		populateRows();
 		populateColumns();
@@ -76,6 +75,8 @@ public class Sudoku {
 	}
 
 	private void populateRows(){
+		rows = new SudokuRow[SUDOKU_SIDE_LENGTH];
+		
 		SudokuSquare[] tempArray;
 		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
 			tempArray = Arrays.copyOfRange(squares, i*SUDOKU_SIDE_LENGTH, (i+1)*SUDOKU_SIDE_LENGTH);
@@ -84,6 +85,8 @@ public class Sudoku {
 	}
 	
 	private void populateColumns(){
+		columns = new SudokuColumn[SUDOKU_SIDE_LENGTH];
+		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
 		int index;
 		
@@ -102,6 +105,8 @@ public class Sudoku {
 	 * |6 7 8|
 	 */
 	private void populateBlocks(){
+		blocks = new SudokuBlock[SUDOKU_SIDE_LENGTH];
+		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
 		int index;
 		
