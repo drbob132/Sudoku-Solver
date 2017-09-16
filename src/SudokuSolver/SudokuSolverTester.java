@@ -8,7 +8,9 @@ public class SudokuSolverTester {
 		String puzzle="";
 		
 		//check args
-		if(args.length > 0){
+		if(args.length < 1){
+			System.out.println("Please give me something in the arguments!");
+		}else{
 			File file = new File(args[0]);
 			//if it's a file, go get it and read puzzle
 			if(file.exists()){
@@ -30,23 +32,27 @@ public class SudokuSolverTester {
 			}
 			try{				
 				//initialize SudokuSolver
+				System.out.println("Initializing SudokuSolver...");
 				SudokuSolver solver = new SudokuSolver();
 				
 				//enter puzzle
 				solver.enterSudoku(puzzle);
 				
 				//print puzzle
+				System.out.println("Printing puzzle before attempt...");
 				System.out.print(solver.toString());
 				
 				//attempt puzzle
+				System.out.println("Attempting to solve puzzle...");
+				solver.solveFull();
 				
 				//print result
+				System.out.println("Printing puzzle after attempt...");
+				System.out.print(solver.toString());
 			
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
-		}else{
-			System.out.println("Please give me something in the arguments!");
 		}
 	}
 }

@@ -3,7 +3,7 @@
  * Also solves them, which is what this is built for!
  * @author drbob132
  * @version 0.1
- * @date 6/26/2017
+ * @date 7/1/2017
  */
 
 package SudokuSolver;
@@ -52,19 +52,11 @@ public class Sudoku {
 		populateColumns();
 		populateBlocks();
 		
-//		SudokuSquare[] squareTemp = new SudokuSquare[SUDOKU_SIDE_LENGTH];
-		
-		//initialize blocks
-		
-		
-		//initialize columns
-		
-		
-		//initialize rows
-		
-		
 	}
 		
+	
+	
+	
 	private void populateSquares(int[] numbers){
 		
 		squares = new SudokuSquare[SUDOKU_NUMBER_OF_SQUARES];
@@ -123,7 +115,7 @@ public class Sudoku {
 		int index;
 		int blockOffset;
 		int rowOffset;
-		//get the index of the starting index of a block
+		//get the index of the starting position of a block
 		//Magic -- 9x9 -> {0, 3, 6, 27, 30, 33, 54, 57, 60}
 		//{+0,+3,+6} & {+0,+27,+54}
 		blockOffset = block%SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH + block/SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH*SUDOKU_SIDE_LENGTH;

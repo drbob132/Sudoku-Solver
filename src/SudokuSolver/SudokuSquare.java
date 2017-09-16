@@ -16,7 +16,7 @@ public class SudokuSquare {
 	private SudokuRow row;
 	private SudokuColumn column;
 	private SudokuBlock block;
-	private ArrayList<SudokuSquareXOR> conditions; //Could technically be up to one of each number
+	private ArrayList<SudokuSquareXOR> conditions; //Could technically contain up to one of each number
 
 	/**
 	 * Initializes a square as empty
