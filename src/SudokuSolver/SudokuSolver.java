@@ -79,8 +79,8 @@ public class SudokuSolver {
 		//That'd require a saved-state in this object if doing it by step should perform the same as doing it fully
 		
 		/*
+		 * start at number 1
 		 * Do until progress halts
-		 *   (start at number 1)
 		 *   Do until number can't be discovered in remaining blocks
 		 *     ((Step code start))
 		 *     Query squares in block that can contain number (rows and columns internally track this)
