@@ -3,11 +3,12 @@
  * One of the two must contain the number stored.
  * 
  * @author drbob132
- * @version 0.1
- * @date 2/23/2017
+ * @version 0.2
+ * @date 9/19/2017
  */
 
 package SudokuSolver;
+
 public class SudokuSquareXOR {
 	private int value;
 	private SudokuSquare square1;
@@ -33,28 +34,31 @@ public class SudokuSquareXOR {
 	public void checkCondition() throws SudokuException{
 		
 		boolean satisfied = false;
+		SudokuSquare target = null;
+
+		//if one of the squares is the value, condition is already fulfilled
+		if(square1.getValue() == value || square2.getValue() == value){
+			satisfied = true;
+		}
+		
+		//if a square can't be the value, then the other must be
+		if(!square1.canBe(value) && !satisfied){
+			target = square2;
+			satisfied = true;
+		}else if(!square2.canBe(value) && !satisfied){
+			target = square1;
+			satisfied = true;
+		}
 
 		try{
-			//if one of the squares is the value, condition is already fulfilled
-			if(square1.getValue() == value || square2.getValue() == value){
-				satisfied = true;
-			}
-			
-			//if a square can't be the value, then the other must be
-			if(!square1.canBe(value) && !satisfied){
-				setSquare(square2);
-				satisfied = true;
-			}else if(!square2.canBe(value) && !satisfied){
-				setSquare(square1);
-				satisfied = true;
+			if(satisfied){
+				removeSelf();
+				if(target != null){
+					setSquare(target);
+				}
 			}
 		}catch(SudokuException problem){
 			throw problem;
-		}
-		
-		//cleanup
-		if(satisfied){
-			removeSelf();
 		}
 	}
 	
@@ -77,5 +81,9 @@ public class SudokuSquareXOR {
 	private void removeSelf(){
 		square1.removeCondition(this);
 		square2.removeCondition(this);
+	}
+	
+	public int getValue(){
+		return value;
 	}
 }

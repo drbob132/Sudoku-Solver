@@ -1,3 +1,11 @@
+/**
+ * Tester for SudokuSolver
+ * Operates on taking argument input... file or direct arguments.
+ * @author drbob132
+ * @version 0.2
+ * @date 9/19/2017
+ */
+
 package SudokuSolver;
 
 import java.io.*;

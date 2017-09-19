@@ -2,8 +2,8 @@
  * Builder and organization aide for a Sudoku puzzle.
  * Also solves them, which is what this is built for!
  * @author drbob132
- * @version 0.1
- * @date 7/1/2017
+ * @version 0.2
+ * @date 9/19/2017
  */
 
 package SudokuSolver;
@@ -18,26 +18,26 @@ public class Sudoku {
 	//The squares that populate blocks/rows/collumns
 	private SudokuSquare[] squares;
 
-	//columns[] 1 to 9, left to right
+	//columns[] 0 to 8, left to right
 	private SudokuColumn[] columns;
 	
-	//rows[] 1 to 9, top to bottom
+	//rows[] 0 to 8, top to bottom
 	private SudokuRow[] rows;
 	
 	/*Blocks[] numbered as 
-	 * |1|2|3|
-	 * |4|5|6|
-	 * |7|8|9|*/
+	 * |0|1|2|
+	 * |3|4|5|
+	 * |6|7|8|*/
 	private SudokuBlock[] blocks;
 	
 	/**
 	 * Populates a Sudoku.
 	 * @param numbers Takes an int[] of 89 (9^2) digits. All must be from 1 to 9, or 0 for empty squares.
-	 * |000102|030405|060708|
-	 * |091011|121314|151617|
-	 * |181920|212223|242526|
+	 * |00 01 02|03 04 05|06 07 08|
+	 * |09 10 11|12 13 14|15 16 17|
+	 * |18 19 20|21 22 23|24 25 26|
 	 * ----------------------
-	 * |272829|303132|333435|
+	 * |27 28 29|30 31 32|33 34 35|
 	 * ...
 	 */
 	public Sudoku(int[] numbers) throws SudokuException{
@@ -53,8 +53,6 @@ public class Sudoku {
 		populateBlocks();
 		
 	}
-		
-	
 	
 	
 	private void populateSquares(int[] numbers){
@@ -66,17 +64,21 @@ public class Sudoku {
 		}
 	}
 
-	private void populateRows(){
+	private void populateRows() throws SudokuException{
 		rows = new SudokuRow[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray;
 		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
 			tempArray = Arrays.copyOfRange(squares, i*SUDOKU_SIDE_LENGTH, (i+1)*SUDOKU_SIDE_LENGTH);
-			rows[i] = new SudokuRow(tempArray);
+			try{
+				rows[i] = new SudokuRow(tempArray);
+			}catch(SudokuException e){
+				throw new SudokuException("Caught at populateRows\n" + e.getMessage());
+			}
 		}
 	}
 	
-	private void populateColumns(){
+	private void populateColumns() throws SudokuException{
 		columns = new SudokuColumn[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
@@ -87,7 +89,11 @@ public class Sudoku {
 				index = i + j*SUDOKU_SIDE_LENGTH;
 				tempArray[j] = squares[index];
 			}
-			columns[i] = new SudokuColumn(Arrays.copyOf(tempArray, tempArray.length));
+			try{
+				columns[i] = new SudokuColumn(Arrays.copyOf(tempArray, tempArray.length));
+			}catch(SudokuException e){
+				throw new SudokuException("Caught at populateRows\n" + e.getMessage());
+			}
 		}
 	}
 
@@ -96,7 +102,7 @@ public class Sudoku {
 	 * |3 4 5|
 	 * |6 7 8|
 	 */
-	private void populateBlocks(){
+	private void populateBlocks() throws SudokuException{
 		blocks = new SudokuBlock[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
@@ -107,11 +113,79 @@ public class Sudoku {
 				index = blockSquareIndex(block, pos);
 				tempArray[pos] = squares[index];
 			}
-			blocks[block] = new SudokuBlock(tempArray);
+			try{
+				blocks[block] = new SudokuBlock(tempArray);
+			}catch(SudokuException e){
+				throw new SudokuException("Caught at populateBlocks\n" + e.getMessage());
+			}
 		}
 	}
 	
-	private int blockSquareIndex(int block, int position){
+	/**
+	 * Checks the square, and relevant row and column to see if the square can hold the given value.
+	 * For checking block and conditions, check blockContains.
+	 * @param block The block that contains the square that is being tested
+	 * @param position The square in the block that is being tested
+	 * @param value The value to check for legality in the square
+	 * @return True if not immediately illegal
+	 */
+	public boolean squareAtPositionCanBe(int squarePosition, int value){
+		
+		boolean squareEmpty = isSquareEmpty(squarePosition);
+		
+		if(squareEmpty){
+			boolean rowCheck = rowContains(squarePosition/SUDOKU_SIDE_LENGTH, value);
+			boolean columnCheck = columnContains(squarePosition%SUDOKU_SIDE_LENGTH, value);
+			
+			return !(rowCheck || columnCheck);
+		}else{
+			return squareEmpty;
+		}
+	}
+	
+	/**
+	 * Checks the block if the given value has been found absolutely, or if found conditionally. (See SudokuSquareXOR for details on conditions)
+	 * @param block The block to be tested.
+	 * @param value The value to check.
+	 * @return True if found absolutely, or if found conditionally. (See SudokuSquareXOR)
+	 */
+	public boolean blockContains(int block, int value){
+		return blocks[block].hasDiscovered(value);
+	}
+	
+	public boolean isSquareEmpty(int position){
+		return squares[position].isEmpty();
+	}
+	
+	public void setSquare(int position, int value) throws SudokuException{
+		try{
+			squares[position].set(value);
+		}catch(SudokuException e){
+			throw e;
+		}
+	}
+	
+	/**
+	 * Checks the column if the given value has been found.
+	 * @param column The column to be tested.
+	 * @param value The value to check.
+	 * @return True if found absolutely, or if found conditionally. (See SudokuSquareXOR)
+	 */
+	public boolean columnContains(int column, int value){
+		return columns[column].contains(value);
+	}
+	
+	/**
+	 * Checks the row if the given value has been found.
+	 * @param row The row to be tested.
+	 * @param value The value to check.
+	 * @return True if found absolutely, or if found conditionally. (See SudokuSquareXOR)
+	 */
+	public boolean rowContains(int row, int value){
+		return rows[row].contains(value);
+	}
+	
+	public static int blockSquareIndex(int block, int position){
 		int index;
 		int blockOffset;
 		int rowOffset;

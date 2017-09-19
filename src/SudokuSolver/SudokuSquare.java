@@ -3,8 +3,8 @@
  * Checks the rules in respect to this square and it's row/column/block.
  * Holds SudokuSquareXOR conditions that will be checked once they are fulfilled.
  * @author drbob132
- * @version 0.1
- * @date 2/23/2017
+ * @version 0.2
+ * @date 9/19/2017
  */
 
 package SudokuSolver;
@@ -112,6 +112,14 @@ public class SudokuSquare {
 		}
 	}
 
+	/**
+	 * Gets an uncontrolled Arraylist of XOR conditions from this square.
+	 * @return
+	 */
+	public ArrayList<SudokuSquareXOR> getXOR(){
+		return new ArrayList<SudokuSquareXOR>(conditions);
+	}
+	
 	public void addCondition(SudokuSquareXOR condition){
 		conditions.add(condition);
 	}
