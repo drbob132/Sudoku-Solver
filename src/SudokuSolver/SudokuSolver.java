@@ -93,14 +93,14 @@ public class SudokuSolver {
 		//That'd require a saved-state in this object if doing it by step should perform the same as doing it fully
 		
 		/*
-		 * start at Number 1
+		 * *start at Number 1
 		 * Do until progress has halted
-		 * 	   CurrentBlock = 0
-		 *     Do until Number can't be discovered in remaining blocks
+		 * *	   CurrentBlock = 0
+		 * *    Do until Number can't be discovered in remaining blocks
 		 *         ((Step code start))
-		 *         Increment CurrentBlock (loop back to 1 if out of bounds, skip blocks where number is found or holds an XOR for that number)
+		 * *        Increment CurrentBlock (loop back to 1 if out of bounds, skip blocks where number is found or holds an XOR for that number)
 		 *         ((Block code start))
-		 *         Query squares in block that can contain Number (rows and columns internally track this)
+		 *         Find squares in block that can contain Number (rows and columns internally track this)
 		 *             Check rows & columns
 		 *             *W* If square is hosting a pair of overlapping XOR conditions, assert that Number is one asserted by one of the two conditions
 		 *             *W* Accounts for alignment ("phantom numbers") from other blocks
@@ -118,15 +118,16 @@ public class SudokuSolver {
 		 *                 *W* Assert that Number is in the current block to the respective column/row
 		 *                 *W* Update mostRecentNumberFound
 		 *         ((Block code stop))
-		 *         If no block can be picked, the number is fully discovered. (XORs may still exist, and will have to be resolved.)
+		 *  *       If no block can be picked, the number is fully discovered. (XORs may still exist, and will have to be resolved.)
 		 *         ((Step code stop))
-		 *     Increment number (loop back to 1 if out of bounds, and skip fully discovered numbers)
-		 *     If no number can be picked, the puzzle is solved. (XORs may still exist, and will have to be resolved.)
-		 *     If Number loops past the most recent number discovered (number found in a square or XOR *or Alightment*)
-		 *         Progress has halted.   
+		 *  *   Increment number (loop back to 1 if out of bounds, and skip fully discovered numbers)
+		 *  *   If no number can be picked, the puzzle is solved. (XORs may still exist, and will have to be resolved.)
+		 *  *   If Number loops past the most recent number discovered (number found in a square or XOR *or Alignment*)
+		 *  *       Progress has halted.   
 		 */
 		
-		progressHalted = false; //if restarted, for whatever reason, if it's halted, chances are you want to give it a go.
+		//if restarted, for whatever reason, if it's halted, chances are you want to give it a go.
+		progressHalted = false; 
 		do{
 			progressHalted = true;
 		}while(!progressHalted);
@@ -145,8 +146,8 @@ public class SudokuSolver {
 		boolean found = false;
 		
 		if(!(sudokuAttempt.blockContains(block, value))){
-	        //Query squares in block that can contain Number (rows and columns internally track this)
-	        //    Check rows & columns
+	        //find squares in block that can contain Number (rows and columns internally track this)
+	        //    (Check rows & columns)
 			ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
 				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
@@ -162,16 +163,17 @@ public class SudokuSolver {
 				}catch(SudokuException e){
 					throw e;
 				}
-		        //    Update mostRecentNumberFound 
+		        // *   Update mostRecentNumberFound 
 		    //else
 			}else{
 		        //    if 2 positions
 				if(possiblePositions.size() == 2){
-					//        Create XOR condition for those squares, and block (This is effectively found)
-					//        Update mostRecentNumberFound
+					// *       Create XOR condition for those squares, and block (This is effectively found)
+					// *       Update mostRecentNumberFound
+				//    else if 0 positions
 				}else if(possiblePositions.size() == 0){
-					//    else if 0 positions
 					//        Puzzle is invalid!
+					throw new SudokuException("Value (" + value + ") is impossible to find in Block " + block + ".");
 				}
 			}
 		}else{
