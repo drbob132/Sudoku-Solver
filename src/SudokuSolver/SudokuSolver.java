@@ -4,8 +4,8 @@
  * Designed to operate in steps, so progression can be observed
  * 
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -17,22 +17,29 @@ public class SudokuSolver {
 	private Sudoku sudokuAttempt;
 	
 	//used for detecting when progress has halted.
-	private int mostRecentValueFound; //Identifies the most recent number found
+	private int mostRecentvalueFound; //Identifies the most recent number found
 	private int mostRecentBlock; //Identifies the block that the most recent value was found in
-	private boolean valueFoundInCurrentValue; //If a value was found in current check - Used to reiterate block search when finding values and avoid early termination
+	private boolean mostRecentFirstPass;
 	private boolean progressHalted;
+	private int iterations;
+	private int maxIterations = 100000;
 	
 	//tracking current state (in object context, as this will have step functionality
+	private ArrayList<ArrayList> valuesToFind;
 	private int currentValue;
 	private int currentBlock;
+	private int targetBlock; //Identifies the last block to search; the block that the most recent value was found in
+	private boolean valueFoundInBlock; //If a value was found in current check - Used to reiterate block search when finding values and avoid early termination
 	
 	public SudokuSolver(){
-		mostRecentValueFound = 0;
+		mostRecentvalueFound = 1;
 		mostRecentBlock = 0;
-		valueFoundInCurrentValue = false;
+		valueFoundInBlock = true; //hacky override to get it started without potential endless loop.
 		progressHalted = false;
-		currentValue = 0;
+		currentValue = 1;
 		currentBlock = 0;
+		targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
+		iterations = 0;
 	}
 	
 	/**
@@ -88,7 +95,7 @@ public class SudokuSolver {
 	 * If puzzle remains incomplete, it is either invalid or unsolvable (according to this algorithm)
 	 * Progress and discovered conditions may be retrieved.
 	 */
-	public void solveFull(){
+	public void solveFull() throws SudokuException{
 		//Should be programmed to use solveStep()
 		//That'd require a saved-state in this object if doing it by step should perform the same as doing it fully
 		
@@ -126,13 +133,73 @@ public class SudokuSolver {
 		 *  *       Progress has halted.   
 		 */
 		
-		//if restarted, for whatever reason, if it's halted, chances are you want to give it a go.
-		progressHalted = false; 
-		do{
+//		progressHalted = false;
+//		int currentBlock; //The current block of the value search
+//		int targetBlock; //The block to stop searching for a value
+//		int currentValue = 1; //the current value being serched
+//		int iterations = 0; //telemetry
+//		boolean valueFoundInBlock = false; //Value found in current block
+		boolean firstPass;
+		try{
+			do{ //until progress halted
+				currentBlock = 0;
+				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
+				firstPass = true;
+				do{ //until this value can't be found currently
+					valueFoundInBlock = false;
+					if(!(sudokuAttempt.blockContains(currentBlock, currentValue))){
+						System.out.println("Looking for " + currentValue + " in block #" + currentBlock);
+						valueFoundInBlock = findValueInBlock(currentValue, currentBlock);
+						if(valueFoundInBlock){
+							targetBlock = currentBlock;
+							mostRecentvalueFound = currentValue;
+							mostRecentBlock = currentBlock;
+							mostRecentFirstPass = true;
+							System.out.println("Found");
+						}
+						iterations++;
+					}
+					firstPass = false;
+					currentBlock = (currentBlock + 1) % Sudoku.SUDOKU_SIDE_LENGTH;
+				}while( !(currentBlock == targetBlock && !valueFoundInBlock) && iterations < maxIterations || firstPass);
+				
+				currentValue = currentValue % Sudoku.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
+				
+				//termination check
+				if(!mostRecentFirstPass){
+					if(mostRecentvalueFound == currentValue){
+						progressHalted = true;
+					}
+				}else{
+					mostRecentFirstPass = false;
+				}
+			}while(!progressHalted && iterations < maxIterations);
+		}catch(SudokuException e){
 			progressHalted = true;
-		}while(!progressHalted);
+			throw e;
+		}
 	}
 	
+	public Sudoku getSudokuAttempt() {
+		return new Sudoku(sudokuAttempt);
+	}
+
+	public int getIterations() {
+		return iterations;
+	}
+
+	public int getMaxIterations() {
+		return maxIterations;
+	}
+
+	public int getCurrentValue() {
+		return currentValue;
+	}
+
+	public int getCurrentBlock() {
+		return currentBlock;
+	}
+
 	/**
 	 * 
 	 * @return position of most recent square found
@@ -144,42 +211,52 @@ public class SudokuSolver {
 	private boolean findValueInBlock(int value, int block) throws SudokuException{
 		
 		boolean found = false;
-		
 		if(!(sudokuAttempt.blockContains(block, value))){
 	        //find squares in block that can contain Number (rows and columns internally track this)
-	        //    (Check rows & columns)
 			ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
 				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
+					System.out.print('a');
 					possiblePositions.add(i);
 				}
 			}
+			System.out.print('b');
 	        //If only 1 position
 			if(possiblePositions.size() == 1){
 		        //    Assign Number to that square
 		        //    (XOR conditions automatically trigger on assignment, and so does completing a row/column/block)
+				System.out.print('c');
 				try{
 					sudokuAttempt.setSquare(Sudoku.blockSquareIndex(block, possiblePositions.get(0)), value);
 				}catch(SudokuException e){
 					throw e;
 				}
 		        // *   Update mostRecentNumberFound 
+				//***  Update this in controller function
+				found = true;
+
+				System.out.print('c');
 		    //else
 			}else{
 		        //    if 2 positions
+				System.out.print('d');
 				if(possiblePositions.size() == 2){
+					found = true;
+					System.out.print('e');
 					// *       Create XOR condition for those squares, and block (This is effectively found)
 					// *       Update mostRecentNumberFound
 				//    else if 0 positions
 				}else if(possiblePositions.size() == 0){
 					//        Puzzle is invalid!
-					throw new SudokuException("Value (" + value + ") is impossible to find in Block " + block + ".");
+					System.out.print('f');
+					progressHalted = true;
+					throw new SudokuException("Puzzle Invalid. Value (" + value + ") is impossible to find in block #" + block + ".");
 				}
 			}
 		}else{
 			found = true;
 		}
-		
+		System.out.println('g');
 		return found;
 	}
 }

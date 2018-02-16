@@ -1,8 +1,8 @@
 /**
  * Logs a set of SudokuBlocks for the purpose of checking Sudoku rules.
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -11,18 +11,12 @@ import java.util.*;
 
 public class SudokuRow {
 	
-	private SudokuSquare[] squares = new SudokuSquare[Sudoku.SUDOKU_SIDE_LENGTH];
+	private SudokuSquare[] squares;
 	private boolean completed;
 
-	public SudokuRow(SudokuSquare[] squares) throws SudokuException{
-		super();
+	public SudokuRow(SudokuSquare[] squares){
 		this.squares = squares;
 		completed = false;
-		try{
-			checkCompletion();
-		}catch(SudokuException e){
-			throw e;
-		}
 	}
 	
 	public boolean contains(int value){

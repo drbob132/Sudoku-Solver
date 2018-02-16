@@ -2,8 +2,8 @@
  * Tester for SudokuSolver
  * Operates on taking argument input... file or direct arguments.
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -37,30 +37,31 @@ public class SudokuSolverTester {
 			}else{ //else, it's assumed to be a puzzle outright
 				System.out.println("Reading argument...");
 				puzzle = args[0];
-			}
-			try{				
-				//initialize SudokuSolver
-				System.out.println("Initializing SudokuSolver...");
-				SudokuSolver solver = new SudokuSolver();
-				
+			}		
+			
+			//initialize SudokuSolver
+			System.out.println("Initializing SudokuSolver...");
+			SudokuSolver solver = new SudokuSolver();
+			try{
 				//enter puzzle
 				solver.enterSudoku(puzzle);
-				
-				//print puzzle
-				System.out.println("Printing puzzle before attempt...");
-				System.out.print(solver.toString());
-				
-				//attempt puzzle
-				System.out.println("Attempting to solve puzzle...");
-				solver.solveFull();
-				
-				//print result
-				System.out.println("Printing puzzle after attempt...");
-				System.out.print(solver.toString());
-			
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
+			//print puzzle
+			System.out.println("Printing puzzle before attempt...");
+			System.out.print(solver.toString());
+			try{
+				//attempt puzzle
+				System.out.println("Attempting to solve puzzle...");
+				solver.solveFull();
+			}catch(SudokuException e){
+				System.out.println(e.getMessage());
+			}
+			//print result
+			System.out.println("Printing puzzle after attempt...");
+			System.out.print(solver.toString());
+			System.out.println("Number of Iterations: " + solver.getIterations());
 		}
 	}
 }

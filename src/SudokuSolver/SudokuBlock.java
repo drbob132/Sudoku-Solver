@@ -2,8 +2,8 @@
  * Logs a set of SudokuBlocks for the purpose of checking Sudoku rules.
  * Also tracks SudokuSquareXOR conditions contained in the Block.
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -11,11 +11,11 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 
-public class SudokuBlock extends SudokuRow{
+public class SudokuBlock extends SudokuRow {
 	
 	private ArrayList<SudokuSquareXOR> xorConditions;
 	
-	public SudokuBlock(SudokuSquare[] squares) throws SudokuException{
+	public SudokuBlock(SudokuSquare[] squares){
 		super(squares);
 		
 		xorConditions = new ArrayList<SudokuSquareXOR>();
@@ -24,8 +24,11 @@ public class SudokuBlock extends SudokuRow{
 	public boolean hasDiscovered(int value){
 		boolean found = contains(value);
 		if(!found){
-			return hasXOR(value);
+			if(hasXOR(value)){
+				found = true;
+			}
 		}
+			
 		return found;
 	}
 	

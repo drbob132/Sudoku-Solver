@@ -2,8 +2,8 @@
  * Builder and organization aide for a Sudoku puzzle.
  * Also solves them, which is what this is built for!
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -40,20 +40,40 @@ public class Sudoku {
 	 * |27 28 29|30 31 32|33 34 35|
 	 * ...
 	 */
-	public Sudoku(int[] numbers) throws SudokuException{
-		if(numbers.length < SUDOKU_NUMBER_OF_SQUARES){
+	public Sudoku(int[] sudokuValues) throws SudokuException{
+		if(sudokuValues.length < SUDOKU_NUMBER_OF_SQUARES){
 			throw new SudokuException("Not enough numbers given");
-		}else if(numbers.length > SUDOKU_NUMBER_OF_SQUARES){
+		}else if(sudokuValues.length > SUDOKU_NUMBER_OF_SQUARES){
 			throw new SudokuException("Too many numbers given.");
 		}
 		
-		populateSquares(numbers);
-		populateRows();
-		populateColumns();
-		populateBlocks();
+		populate(sudokuValues);
 		
 	}
 	
+	/**
+	 * Deep copies a Sudoku.
+	 * @param otherSudoku Sudoku to copy.
+	 */
+	public Sudoku(Sudoku otherSudoku){
+		int[] sudokuValues = new int[SUDOKU_NUMBER_OF_SQUARES];
+		for(int i=0; i<SUDOKU_NUMBER_OF_SQUARES; i++){
+			sudokuValues[i] = valueAt(i);
+		}
+		
+		populate(sudokuValues);
+	}
+	
+	private void populate(int[] sudokuValues){
+		populateSquares(sudokuValues);
+		populateRows();
+		populateColumns();
+		populateBlocks();
+	}
+	
+	private int valueAt(int position){
+		return squares[position].getValue();
+	}
 	
 	private void populateSquares(int[] numbers){
 		
@@ -64,21 +84,17 @@ public class Sudoku {
 		}
 	}
 
-	private void populateRows() throws SudokuException{
+	private void populateRows(){
 		rows = new SudokuRow[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray;
 		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
 			tempArray = Arrays.copyOfRange(squares, i*SUDOKU_SIDE_LENGTH, (i+1)*SUDOKU_SIDE_LENGTH);
-			try{
-				rows[i] = new SudokuRow(tempArray);
-			}catch(SudokuException e){
-				throw new SudokuException("Caught at populateRows\n" + e.getMessage());
-			}
+			rows[i] = new SudokuRow(tempArray);
 		}
 	}
 	
-	private void populateColumns() throws SudokuException{
+	private void populateColumns(){
 		columns = new SudokuColumn[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
@@ -89,11 +105,7 @@ public class Sudoku {
 				index = i + j*SUDOKU_SIDE_LENGTH;
 				tempArray[j] = squares[index];
 			}
-			try{
-				columns[i] = new SudokuColumn(Arrays.copyOf(tempArray, tempArray.length));
-			}catch(SudokuException e){
-				throw new SudokuException("Caught at populateRows\n" + e.getMessage());
-			}
+			columns[i] = new SudokuColumn(Arrays.copyOf(tempArray, tempArray.length));
 		}
 	}
 
@@ -102,7 +114,7 @@ public class Sudoku {
 	 * |3 4 5|
 	 * |6 7 8|
 	 */
-	private void populateBlocks() throws SudokuException{
+	private void populateBlocks(){
 		blocks = new SudokuBlock[SUDOKU_SIDE_LENGTH];
 		
 		SudokuSquare[] tempArray = new SudokuSquare[SUDOKU_SIDE_LENGTH];
@@ -113,11 +125,7 @@ public class Sudoku {
 				index = blockSquareIndex(block, pos);
 				tempArray[pos] = squares[index];
 			}
-			try{
-				blocks[block] = new SudokuBlock(tempArray);
-			}catch(SudokuException e){
-				throw new SudokuException("Caught at populateBlocks\n" + e.getMessage());
-			}
+			blocks[block] = new SudokuBlock(tempArray);
 		}
 	}
 	
@@ -192,7 +200,9 @@ public class Sudoku {
 		//get the index of the starting position of a block
 		//Magic -- 9x9 -> {0, 3, 6, 27, 30, 33, 54, 57, 60}
 		//{+0,+3,+6} & {+0,+27,+54}
-		blockOffset = block%SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH + block/SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH*SUDOKU_SIDE_LENGTH;
+		//Note: This is inverted by how it's read from file
+		int blockMirrored = SUDOKU_SIDE_LENGTH - block - 1;
+		blockOffset = (blockMirrored)%SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH + (blockMirrored)/SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH*SUDOKU_SIDE_LENGTH;
 		
 		//get the index of the row
 		//{+0,+9,+18}

@@ -3,8 +3,8 @@
  * Checks the rules in respect to this square and it's row/column/block.
  * Holds SudokuSquareXOR conditions that will be checked once they are fulfilled.
  * @author drbob132
- * @version 0.2
- * @date 9/19/2017
+ * @version 0.3
+ * @date 02/16/2018
  */
 
 package SudokuSolver;
@@ -16,7 +16,7 @@ public class SudokuSquare {
 	private SudokuRow row;
 	private SudokuColumn column;
 	private SudokuBlock block;
-	private ArrayList<SudokuSquareXOR> conditions; //Could technically contain up to one of each number
+	private ArrayList<SudokuSquareXOR> conditions = new ArrayList<SudokuSquareXOR>();; //Could technically contain up to one of each number
 
 	/**
 	 * Initializes a square as empty
@@ -106,9 +106,11 @@ public class SudokuSquare {
 		this.value = value;
 		
 		//then check conditions, and kill them
-		for(SudokuSquareXOR condition : conditions){
-			condition.checkCondition();
-			conditions.remove(condition);
+		if(!conditions.isEmpty()){
+			for(SudokuSquareXOR condition : conditions){
+				condition.checkCondition();
+				conditions.remove(condition);
+			}
 		}
 	}
 
