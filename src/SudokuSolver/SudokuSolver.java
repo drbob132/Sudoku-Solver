@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class SudokuSolver {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private Sudoku sudokuAttempt;
 	
@@ -25,7 +25,7 @@ public class SudokuSolver {
 	private boolean mostRecentFirstPass;
 	private boolean progressHalted;
 	private int iterations;
-	private int maxIterations = 10000;
+	private int maxIterations = 100;
 	
 	//tracking current state (in object context, as this will have step functionality
 	private ArrayList<ArrayList> valuesToFind;
@@ -161,7 +161,9 @@ public class SudokuSolver {
 							mostRecentvalueFound = currentValue;
 							mostRecentBlock = currentBlock;
 							mostRecentFirstPass = true;
-							System.out.println("Found");
+							if(DEBUG) {
+								System.out.println("Found");
+							}
 						}
 						iterations++;
 					}else if(DEBUG){
@@ -226,16 +228,13 @@ public class SudokuSolver {
 			ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
 				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
-					System.out.print('a');
 					possiblePositions.add(i);
 				}
 			}
-			System.out.print('b');
 	        //If only 1 position
 			if(possiblePositions.size() == 1){
 		        //    Assign Number to that square
 		        //    (XOR conditions automatically trigger on assignment, and so does completing a row/column/block)
-				System.out.print('c');
 				try{
 					sudokuAttempt.setSquare(Sudoku.blockSquareIndex(block, possiblePositions.get(0)), value);
 				}catch(SudokuException e){
@@ -244,21 +243,16 @@ public class SudokuSolver {
 		        // *   Update mostRecentNumberFound 
 				//***  Update this in controller function
 				found = true;
-
-				System.out.print('c');
 		    //else
 			}else{
 		        //    if 2 positions
-				System.out.print('d');
 				if(possiblePositions.size() == 2){
 					found = true;
-					System.out.print('e');
 					// *       Create XOR condition for those squares, and block (This is effectively found)
 					// *       Update mostRecentNumberFound
 				//    else if 0 positions
 				}else if(possiblePositions.size() == 0){
 					//        Puzzle is invalid!
-					System.out.print('f');
 					progressHalted = true;
 					throw new SudokuException("Puzzle Invalid. Value (" + value + ") is impossible to find in block #" + block + ".");
 				}
@@ -266,7 +260,6 @@ public class SudokuSolver {
 		}else{
 			found = true;
 		}
-		System.out.println('g');
 		return found;
 	}
 }

@@ -171,8 +171,9 @@ public class Sudoku {
 		if(squareEmpty){
 			boolean rowCheck = rowContains(squarePosition/SUDOKU_SIDE_LENGTH, value);
 			boolean columnCheck = columnContains(squarePosition%SUDOKU_SIDE_LENGTH, value);
-			System.out.println("[pos"+squarePosition+" row"+squarePosition/SUDOKU_SIDE_LENGTH+" col"+squarePosition%SUDOKU_SIDE_LENGTH+"]");
-			
+			if(DEBUG) {
+				System.out.println("[pos"+squarePosition+" row"+squarePosition/SUDOKU_SIDE_LENGTH+" col"+squarePosition%SUDOKU_SIDE_LENGTH+"]");
+			}
 			return !(rowCheck || columnCheck);
 		}else{
 			return squareEmpty;
