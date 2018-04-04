@@ -10,18 +10,28 @@ package SudokuSolver;
 import java.util.*;
 
 public class SudokuRow {
+
+	private final boolean DEBUG = false;
 	
 	private SudokuSquare[] squares;
 	private boolean completed;
 
 	public SudokuRow(SudokuSquare[] squares){
-		this.squares = squares;
+		SudokuSquare[] squareCopy = new SudokuSquare[squares.length];
+		System.arraycopy(squares, 0, squareCopy, 0, squares.length);
+		this.squares = squareCopy;
 		completed = false;
 	}
 	
 	public boolean contains(int value){
 		for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
+			if(DEBUG) {
+				System.out.println("[" + getClass() + ".contains(); " + squares[i].getValue() + "?=" + value + "]");
+			}
 			if(squares[i].getValue() == value){
+				if(DEBUG) {
+					System.out.println("[found "+value+"]");
+				}
 				return true;
 			}
 		}

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 
 public class SudokuBlock extends SudokuRow {
+
+	private final boolean DEBUG = false;
 	
 	private ArrayList<SudokuSquareXOR> xorConditions;
 	
@@ -22,11 +24,19 @@ public class SudokuBlock extends SudokuRow {
 	}
 	
 	public boolean hasDiscovered(int value){
+		if(DEBUG) {
+			System.out.println("[" + getClass() + ".hasDiscovered(); Printing current block]\n" + toString() + "");
+		}
 		boolean found = contains(value);
 		if(!found){
 			if(hasXOR(value)){
+				if(DEBUG) {
+					System.out.println("[" + getClass() + ".hasDiscovered(); Block has XOR for " + value + "]");
+				}
 				found = true;
 			}
+		}else if(DEBUG) {
+			System.out.println("[" + getClass() + ".hasDiscovered(); block contained " + value + "]");
 		}
 			
 		return found;

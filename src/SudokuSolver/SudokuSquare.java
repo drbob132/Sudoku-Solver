@@ -12,11 +12,14 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 public class SudokuSquare {
+
+	private static final boolean DEBUG = false;
+	
 	private int value;
 	private SudokuRow row;
 	private SudokuColumn column;
 	private SudokuBlock block;
-	private ArrayList<SudokuSquareXOR> conditions = new ArrayList<SudokuSquareXOR>();; //Could technically contain up to one of each number
+	private ArrayList<SudokuSquareXOR> conditions = new ArrayList<SudokuSquareXOR>(); //Could technically contain up to one of each number
 
 	/**
 	 * Initializes a square as empty

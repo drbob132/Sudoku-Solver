@@ -5,7 +5,7 @@
  * 
  * @author drbob132
  * @version 0.3
- * @date 02/16/2018
+ * @date 04/03/2018
  */
 
 package SudokuSolver;
@@ -13,8 +13,11 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 public class SudokuSolver {
+
+	private static final boolean DEBUG = true;
 	
 	private Sudoku sudokuAttempt;
+	
 	
 	//used for detecting when progress has halted.
 	private int mostRecentvalueFound; //Identifies the most recent number found
@@ -22,7 +25,7 @@ public class SudokuSolver {
 	private boolean mostRecentFirstPass;
 	private boolean progressHalted;
 	private int iterations;
-	private int maxIterations = 100000;
+	private int maxIterations = 10000;
 	
 	//tracking current state (in object context, as this will have step functionality
 	private ArrayList<ArrayList> valuesToFind;
@@ -143,12 +146,15 @@ public class SudokuSolver {
 		try{
 			do{ //until progress halted
 				currentBlock = 0;
-				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
+				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH;
 				firstPass = true;
 				do{ //until this value can't be found currently
+					currentBlock = currentBlock % Sudoku.SUDOKU_SIDE_LENGTH;
 					valueFoundInBlock = false;
 					if(!(sudokuAttempt.blockContains(currentBlock, currentValue))){
-						System.out.println("Looking for " + currentValue + " in block #" + currentBlock);
+						if(DEBUG) {
+							System.out.println("Looking for " + currentValue + " in block #" + currentBlock);
+						}
 						valueFoundInBlock = findValueInBlock(currentValue, currentBlock);
 						if(valueFoundInBlock){
 							targetBlock = currentBlock;
@@ -158,9 +164,11 @@ public class SudokuSolver {
 							System.out.println("Found");
 						}
 						iterations++;
+					}else if(DEBUG){
+						System.out.println("Value " + currentValue + " in block #" + currentBlock + " already discovered.");
 					}
 					firstPass = false;
-					currentBlock = (currentBlock + 1) % Sudoku.SUDOKU_SIDE_LENGTH;
+					currentBlock++;
 				}while( !(currentBlock == targetBlock && !valueFoundInBlock) && iterations < maxIterations || firstPass);
 				
 				currentValue = currentValue % Sudoku.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
@@ -174,6 +182,8 @@ public class SudokuSolver {
 					mostRecentFirstPass = false;
 				}
 			}while(!progressHalted && iterations < maxIterations);
+			
+			
 		}catch(SudokuException e){
 			progressHalted = true;
 			throw e;
