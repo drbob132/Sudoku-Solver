@@ -67,4 +67,29 @@ public class SudokuBlock extends SudokuRow {
 		square2.addCondition(xor);
 	}
 	
+	/**
+	 * Returns the count of conditions found in this block.
+	 * @return The count of conditions found in this block.
+	 */
+	public int getXORConditionCount() {
+		cleanXORs();
+		return xorConditions.size();
+	}
+	
+	/**
+	 * removes any satisfied XORs from the list.
+	 */
+	public void cleanXORs() {
+		SudokuSquareXOR xor;
+		int i=0;
+		while(i < xorConditions.size()) {
+			xor = xorConditions.get(i);
+			if(xor.isSatisfied()) {
+				xorConditions.remove(xor);
+			}else {
+				i++;
+			}
+		}
+	}
+	
 }

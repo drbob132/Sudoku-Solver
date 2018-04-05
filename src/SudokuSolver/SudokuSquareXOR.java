@@ -13,6 +13,7 @@ public class SudokuSquareXOR {
 	private int value;
 	private SudokuSquare square1;
 	private SudokuSquare square2;
+	private boolean satisfied;
 	
 	/**
 	 * Creates a condition that requires one of the two SudokuSquares to be the given value.
@@ -24,6 +25,7 @@ public class SudokuSquareXOR {
 		this.square1 = square1;
 		this.square2 = square2;
 		this.value = value;
+		this.satisfied = false;
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class SudokuSquareXOR {
 		if(square.isEmpty()){
 			square.set(value);
 		}else{
-			throw new SudokuException("Tried to set square (" + /*square.getx() + ", " + square.gety() +*/ ") with " + value);
+			throw new SudokuException("XOR tried to set square (" + /*square.getx() + ", " + square.gety() +*/ ") with " + value);
 		}
 	}
 	
@@ -81,6 +83,19 @@ public class SudokuSquareXOR {
 	private void removeSelf(){
 		square1.removeCondition(this);
 		square2.removeCondition(this);
+	}
+	
+	public boolean isSatisfied() {
+		checkSatisfaction();
+		return satisfied;
+	}
+	
+	private void checkSatisfaction() {
+		if(square1.getValue() == value || square2.getValue() == value ) {
+			satisfied = true;
+		}else {
+			satisfied = false;
+		}
 	}
 	
 	public int getValue(){

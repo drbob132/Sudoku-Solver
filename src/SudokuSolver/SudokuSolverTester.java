@@ -62,6 +62,8 @@ public class SudokuSolverTester {
 			System.out.println("Printing puzzle after attempt...");
 			System.out.print(solver.print());
 			System.out.println("Number of times blocks were searched: " + solver.getIterations());
+			System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
+			
 		}
 	}
 }

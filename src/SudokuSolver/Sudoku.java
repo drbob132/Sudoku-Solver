@@ -218,6 +218,18 @@ public class Sudoku {
 	}
 	
 	/**
+	 * Returns the count of conditions found in each block.
+	 * @return The count of conditions found in each block.
+	 */
+	public int getXORConditionCount() {
+		int count = 0;
+		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++) {
+			count += blocks[i].getXORConditionCount();
+		}
+		return count;
+	}
+	
+	/**
 	 * Checks the column if the given value has been found.
 	 * @param column The column to be tested.
 	 * @param value The value to check.
