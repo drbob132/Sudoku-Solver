@@ -50,7 +50,7 @@ public class SudokuSolverTester {
 			}
 			//print puzzle
 			System.out.println("Printing puzzle before attempt...");
-			System.out.print(solver.toString());
+			System.out.print(solver.print());
 			try{
 				//attempt puzzle
 				System.out.println("Attempting to solve puzzle...");
@@ -60,8 +60,8 @@ public class SudokuSolverTester {
 			}
 			//print result
 			System.out.println("Printing puzzle after attempt...");
-			System.out.print(solver.toString());
-			System.out.println("Number of Iterations: " + solver.getIterations());
+			System.out.print(solver.print());
+			System.out.println("Number of times blocks were searched: " + solver.getIterations());
 		}
 	}
 }

@@ -98,7 +98,7 @@ public class Sudoku {
 		if(DEBUG) {
 			for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
 				System.out.println("[" + getClass() + ".populateRows(); Printing Row #" + i + "]");
-				System.out.println(rows[i].toString());
+				System.out.println(rows[i].print());
 			}
 		}
 	}
@@ -119,7 +119,7 @@ public class Sudoku {
 		if(DEBUG) {
 			for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
 				System.out.println("[" + getClass() + ".populateColumns(); Printing Column #" + i + "]");
-				System.out.println(columns[i].toString());
+				System.out.println(columns[i].print());
 			}
 		}
 	}
@@ -152,7 +152,7 @@ public class Sudoku {
 		if(DEBUG) {
 			for(int i=0; i < SUDOKU_SIDE_LENGTH; i++){
 				System.out.println("[" + getClass() + ".populateBlocks(); Printing Block #" + i + "]");
-				System.out.println(blocks[i].toString());
+				System.out.println(blocks[i].print());
 			}
 		}
 	}
@@ -190,7 +190,7 @@ public class Sudoku {
 		SudokuBlock targetBlock = blocks[block];
 		if(DEBUG) {
 			System.out.println("[" + getClass() + ".blockContains(); checking block #" + block + " for value " + value + "]");
-			System.out.println(targetBlock.toString());
+			System.out.println(targetBlock.print());
 		}
 		return targetBlock.hasDiscovered(value);
 	}
@@ -210,6 +210,11 @@ public class Sudoku {
 		}catch(SudokuException e){
 			throw e;
 		}
+	}
+	
+	public void addXOR(int block, int value, int position1, int position2) {
+		SudokuBlock targetBlock = blocks[block];
+		targetBlock.addXOR(value, position1, position2);
 	}
 	
 	/**
@@ -264,11 +269,11 @@ public class Sudoku {
 	/**
 	 * Prints out the whole Sudoku as a string. 
 	 */
-	public String toString(){
+	public String print(){
 		String sudokuString = "";
 		
 		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
-			sudokuString += rows[i].toString();
+			sudokuString += rows[i].print();
 			sudokuString += '\n';
 		}
 		

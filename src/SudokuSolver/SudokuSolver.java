@@ -25,7 +25,7 @@ public class SudokuSolver {
 	private boolean mostRecentFirstPass;
 	private boolean progressHalted;
 	private int iterations;
-	private int maxIterations = 100;
+	private int maxIterations = 1000;
 	
 	//tracking current state (in object context, as this will have step functionality
 	private ArrayList<ArrayList> valuesToFind;
@@ -80,16 +80,23 @@ public class SudokuSolver {
 		sudokuAttempt = new Sudoku(values);
 	}
 	
-	public String toString(){
-		return sudokuAttempt.toString();
+	public String print(){
+		return sudokuAttempt.print();
 	}
 	
 	/**
-	 * Returns the details of any extra stored conditions that assert
-	 * @return
+	 * @return The details of any remaining stored conditions that assert a number's possible positions.
 	 */
 	public String getXORConditions(){
-		return "";
+		return ;
+	}
+	
+	/**
+	 * @return The count of any remaining stored conditions that assert a number's possible positions.
+	 */
+	public int getXORConditionCount(){
+		int count = sudokuAttempt.getXORConditionCount();
+		return count;
 	}
 	
 	/**
@@ -176,14 +183,20 @@ public class SudokuSolver {
 				currentValue = currentValue % Sudoku.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
 				
 				//termination check
-				if(!mostRecentFirstPass){
-					if(mostRecentvalueFound == currentValue){
+				if(!mostRecentFirstPass && mostRecentvalueFound == currentValue){
 						progressHalted = true;
-					}
 				}else{
 					mostRecentFirstPass = false;
 				}
 			}while(!progressHalted && iterations < maxIterations);
+			
+		if(progressHalted) {
+			System.out.println("Progress was halted because progress appeared to have halted. "
+					+ "(looped through Sudoku without progress)");
+		}else if(iterations >= maxIterations) {
+			System.out.println("Progress was halted because the max number of iterations was reached. "
+					+ "(actual iterations: " + iterations + ", max iterations: " + maxIterations + ")");
+		}
 			
 			
 		}catch(SudokuException e){
@@ -221,11 +234,12 @@ public class SudokuSolver {
 	}
 	
 	private boolean findValueInBlock(int value, int block) throws SudokuException{
+
+		ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 		
 		boolean found = false;
 		if(!(sudokuAttempt.blockContains(block, value))){
 	        //find squares in block that can contain Number (rows and columns internally track this)
-			ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
 				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
 					possiblePositions.add(i);
@@ -249,6 +263,7 @@ public class SudokuSolver {
 				if(possiblePositions.size() == 2){
 					found = true;
 					// *       Create XOR condition for those squares, and block (This is effectively found)
+					sudokuAttempt.addXOR(block, value, possiblePositions.get(0), possiblePositions.get(1));
 					// *       Update mostRecentNumberFound
 				//    else if 0 positions
 				}else if(possiblePositions.size() == 0){
@@ -260,6 +275,25 @@ public class SudokuSolver {
 		}else{
 			found = true;
 		}
+		
+		if(DEBUG) {
+			System.out.print("[" + getClass() + ".findValueInBlock(); ");
+			if(found) {
+				System.out.print("Value must be at: ");
+			}else {
+				System.out.print("Positions possible: ");
+				
+			}
+			if(possiblePositions.size() > 0) {
+				for(Integer number : possiblePositions) {
+					System.out.print(number + " ");
+				}
+			}else {
+				System.out.print("none");
+			}
+			System.out.println("]");
+		}
+		
 		return found;
 	}
 }

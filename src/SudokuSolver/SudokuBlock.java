@@ -20,6 +20,12 @@ public class SudokuBlock extends SudokuRow {
 	public SudokuBlock(SudokuSquare[] squares){
 		super(squares);
 		
+		if(getClass().getName().contains("SudokuBlock")) {
+			for(SudokuSquare square : squares) {
+				square.setBlock(this);
+			}
+		}
+		
 		xorConditions = new ArrayList<SudokuSquareXOR>();
 	}
 	
@@ -51,7 +57,7 @@ public class SudokuBlock extends SudokuRow {
 		return false;
 	}
 	
-	public void addXOR(int position1, int position2, int value){
+	public void addXOR(int value, int position1, int position2){
 		SudokuSquare square1 = getSquare(position1);
 		SudokuSquare square2 = getSquare(position2);
 		

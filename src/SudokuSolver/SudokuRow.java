@@ -13,6 +13,10 @@ public class SudokuRow {
 
 	private final boolean DEBUG = false;
 	
+	//used to allow values higher than 9, extending into A-Z and thereon after.
+	//Characters between 9 and A are nonsense
+	public final int AFTER_9_PRINT_OFFSET = 7;
+	
 	private SudokuSquare[] squares;
 	private boolean completed;
 
@@ -21,6 +25,12 @@ public class SudokuRow {
 		System.arraycopy(squares, 0, squareCopy, 0, squares.length);
 		this.squares = squareCopy;
 		completed = false;
+		
+		if(getClass().getName().contains("SudokuRow")) {
+			for(SudokuSquare square : squares) {
+				square.setRow(this);
+			}
+		}
 	}
 	
 	public boolean contains(int value){
@@ -38,7 +48,7 @@ public class SudokuRow {
 		return false;
 	}
 	
-	public String toString(){
+	public String print(){
 		String rowString = "|";
 		char valueChar;
 		for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
@@ -48,6 +58,9 @@ public class SudokuRow {
 			else{
 				valueChar = '0';
 				valueChar += squares[i].getValue();
+				if(valueChar > '9') {
+					valueChar += AFTER_9_PRINT_OFFSET;
+				}
 			}
 			rowString += valueChar;
 			rowString += '|';
@@ -96,7 +109,7 @@ public class SudokuRow {
 						squares[i].set(i+1);
 						completed = true;
 					}catch(SudokuException e){
-						throw e;
+						throw new SudokuException("Check Completion error: " + e.getMessage());
 					}
 				}
 			}

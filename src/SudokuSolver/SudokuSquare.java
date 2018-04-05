@@ -61,10 +61,10 @@ public class SudokuSquare {
 	}
 	
 	/**
-	 * @return If the square contains a value
+	 * @return If the square does not contain a value. (Zero is considered empty)
 	 */
 	public Boolean isEmpty(){
-		if(value <= 0){
+		if(value == 0){
 			return true;
 		}else{
 			return false;
@@ -109,12 +109,17 @@ public class SudokuSquare {
 		this.value = value;
 		
 		//then check conditions, and kill them
-		if(!conditions.isEmpty()){
-			for(SudokuSquareXOR condition : conditions){
-				condition.checkCondition();
+		while(!conditions.isEmpty()){
+			SudokuSquareXOR condition = conditions.get(0);
+			condition.checkCondition();
+			if(!conditions.isEmpty()){
 				conditions.remove(condition);
 			}
 		}
+		
+		/*row.checkCompletion();
+		column.checkCompletion();
+		block.checkCompletion();*/
 	}
 
 	/**

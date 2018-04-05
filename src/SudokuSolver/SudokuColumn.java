@@ -12,6 +12,12 @@ public class SudokuColumn extends SudokuRow{
 	public SudokuColumn(SudokuSquare[] squares){
 		super(squares);
 		
+		if(getClass().getName().contains("SudokuColumn")) {
+			for(SudokuSquare square : squares) {
+				square.setColumn(this);
+			}
+		}
+		
 	}
 	
 	
