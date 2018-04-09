@@ -181,15 +181,30 @@ public class Sudoku {
 	}
 	
 	/**
-	 * Checks the block if the given value has been found absolutely or conditionally. (See SudokuSquareXOR for details on conditions)
+	 * Checks the block if the given value has been found absolutely. (A square contains that value)
 	 * @param block The block to be tested.
 	 * @param value The value to check.
-	 * @return True if found absolutely, or if found conditionally. (See SudokuSquareXOR)
+	 * @return True if found in a square
 	 */
-	public boolean blockContains(int block, int value){
+	public boolean blockContainsAbsolute(int block, int value){
 		SudokuBlock targetBlock = blocks[block];
 		if(DEBUG) {
-			System.out.println("[" + getClass() + ".blockContains(); checking block #" + block + " for value " + value + "]");
+			System.out.println("[" + getClass() + ".blockContainsAbsolute(); checking block #" + block + " for value " + value + "]");
+			System.out.println(targetBlock.print());
+		}
+		return targetBlock.contains(value);
+	}
+	
+	/**
+	 * Checks the block if the given value has been found absolutely OR conditionally. (See SudokuSquareXOR for details on conditions)
+	 * @param block The block to be tested.
+	 * @param value The value to check.
+	 * @return True if found absolutely OR if found conditionally. (See SudokuSquareXOR)
+	 */
+	public boolean blockContainsConditional(int block, int value){
+		SudokuBlock targetBlock = blocks[block];
+		if(DEBUG) {
+			System.out.println("[" + getClass() + ".blockContainsConditional(); checking block #" + block + " for value " + value + "]");
 			System.out.println(targetBlock.print());
 		}
 		return targetBlock.hasDiscovered(value);
@@ -227,6 +242,15 @@ public class Sudoku {
 			count += blocks[i].getXORConditionCount();
 		}
 		return count;
+	}
+	
+	/**
+	 * Checks any conditions in the block for satisfaction.
+	 * @param block the block number to check (from 0 to Sudoku.SUDOKU_SIDE_LENGTH)
+	 */
+	public void checkBlockConditions(int block) throws SudokuException{
+		SudokuBlock targetBlock = blocks[block];
+		targetBlock.checkConditions();
 	}
 	
 	/**

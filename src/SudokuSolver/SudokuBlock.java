@@ -79,7 +79,7 @@ public class SudokuBlock extends SudokuRow {
 	/**
 	 * removes any satisfied XORs from the list.
 	 */
-	public void cleanXORs() {
+	private void cleanXORs() {
 		SudokuSquareXOR xor;
 		int i=0;
 		while(i < xorConditions.size()) {
@@ -92,4 +92,18 @@ public class SudokuBlock extends SudokuRow {
 		}
 	}
 	
+	public void checkConditions() throws SudokuException{
+		int i = 0;
+		int startingSize = xorConditions.size();
+		try {
+			while(i < xorConditions.size()) {
+				xorConditions.get(i++).checkCondition();
+			}
+		}catch(SudokuException e) {
+			throw e;
+		}
+		if( xorConditions.size() < startingSize) {
+			cleanXORs();
+		}
+	}
 }

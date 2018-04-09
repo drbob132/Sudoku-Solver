@@ -14,6 +14,11 @@ import java.util.Scanner;
 public class SudokuSolverTester {
 	public static void main(String[] args){
 		String puzzle="";
+		long startTime = 0;
+		long endTime = 0;
+		long miliseconds = 0;
+		long decimalPlace = 0;
+		final long nanoToMili = 1000000;
 		
 		//check args
 		if(args.length < 1){
@@ -37,7 +42,7 @@ public class SudokuSolverTester {
 			}else{ //else, it's assumed to be a puzzle outright
 				System.out.println("Reading argument...");
 				puzzle = args[0];
-			}		
+			}
 			
 			//initialize SudokuSolver
 			System.out.println("Initializing SudokuSolver...");
@@ -51,6 +56,8 @@ public class SudokuSolverTester {
 			//print puzzle
 			System.out.println("Printing puzzle before attempt...");
 			System.out.print(solver.print());
+			
+			startTime = System.nanoTime();
 			try{
 				//attempt puzzle
 				System.out.println("Attempting to solve puzzle...");
@@ -58,11 +65,18 @@ public class SudokuSolverTester {
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
+			endTime = System.nanoTime();
+			
 			//print result
 			System.out.println("Printing puzzle after attempt...");
 			System.out.print(solver.print());
-			System.out.println("Number of times blocks were searched: " + solver.getIterations());
+			System.out.println("Number of times blocks were searched: " + solver.getBlockSearchCount());
+			System.out.println("Number of iterations: " + solver.getIterations());
 			System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
+
+			miliseconds = (endTime - startTime)/nanoToMili;
+			decimalPlace = (endTime - startTime)%nanoToMili;
+			System.out.println("(Time Elapsed: " + miliseconds + "." + decimalPlace + " ms)");
 			
 		}
 	}

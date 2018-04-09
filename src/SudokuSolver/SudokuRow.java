@@ -83,30 +83,30 @@ public class SudokuRow {
 			return completed;
 		}
 		
-		int finalPosition = -1;
+		int blankPosition = -1;
 		ArrayList<Integer> foundList = new ArrayList<Integer>();
 		boolean confirmedIncomplete = false;
 		
 		for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH && !confirmedIncomplete; i++){
 			if(squares[i].isEmpty()){
-				if(finalPosition >= 0){
+				if(blankPosition >= 0){
 					confirmedIncomplete = true;
 				}else{
-					finalPosition = i;
+					blankPosition = i;
 				}
 			}else{
 				foundList.add(squares[i].getValue());
 			}
 		}
 		
-		if(finalPosition == -1){
+		if(blankPosition == -1){
 			completed = true;
-		}else if(!confirmedIncomplete){
+		}else if(foundList.size() == Sudoku.SUDOKU_SIDE_LENGTH - 1){
 			Collections.sort(foundList);
 			for(int i=0; i<foundList.size() && !completed; i++){
 				if(foundList.get(i) != i+1){
 					try{
-						squares[i].set(i+1);
+						squares[blankPosition].set(i+1);
 						completed = true;
 					}catch(SudokuException e){
 						throw new SudokuException("Check Completion error: " + e.getMessage());

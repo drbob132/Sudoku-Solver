@@ -117,9 +117,9 @@ public class SudokuSquare {
 			}
 		}
 		
-		/*row.checkCompletion();
+		row.checkCompletion();
 		column.checkCompletion();
-		block.checkCompletion();*/
+		block.checkCompletion();
 	}
 
 	/**

@@ -86,16 +86,16 @@ public class SudokuSquareXOR {
 	}
 	
 	public boolean isSatisfied() {
-		checkSatisfaction();
-		return satisfied;
+		return checkSatisfaction();
 	}
 	
-	private void checkSatisfaction() {
+	private boolean checkSatisfaction() {
 		if(square1.getValue() == value || square2.getValue() == value ) {
 			satisfied = true;
 		}else {
 			satisfied = false;
 		}
+		return satisfied;
 	}
 	
 	public int getValue(){

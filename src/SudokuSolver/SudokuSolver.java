@@ -25,7 +25,8 @@ public class SudokuSolver {
 	private boolean mostRecentFirstPass;
 	private boolean progressHalted;
 	private int iterations;
-	private int maxIterations = 1000;
+	private int maxIterations = 10000;
+	private int blockSearchCount;
 	
 	//tracking current state (in object context, as this will have step functionality
 	private ArrayList<ArrayList> valuesToFind;
@@ -43,6 +44,7 @@ public class SudokuSolver {
 		currentBlock = 0;
 		targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
 		iterations = 0;
+		blockSearchCount = 0;
 	}
 	
 	/**
@@ -88,7 +90,7 @@ public class SudokuSolver {
 	 * @return The details of any remaining stored conditions that assert a number's possible positions.
 	 */
 	public String getXORConditions(){
-		return ;
+		return "";
 	}
 	
 	/**
@@ -150,15 +152,16 @@ public class SudokuSolver {
 //		int iterations = 0; //telemetry
 //		boolean valueFoundInBlock = false; //Value found in current block
 		boolean firstPass;
+		boolean continueSearchingWithThisValue = false;
 		try{
 			do{ //until progress halted
 				currentBlock = 0;
-				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH;
+				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
 				firstPass = true;
 				do{ //until this value can't be found currently
 					currentBlock = currentBlock % Sudoku.SUDOKU_SIDE_LENGTH;
 					valueFoundInBlock = false;
-					if(!(sudokuAttempt.blockContains(currentBlock, currentValue))){
+					if(!(sudokuAttempt.blockContainsConditional(currentBlock, currentValue))){
 						if(DEBUG) {
 							System.out.println("Looking for " + currentValue + " in block #" + currentBlock);
 						}
@@ -172,31 +175,61 @@ public class SudokuSolver {
 								System.out.println("Found");
 							}
 						}
-						iterations++;
+						blockSearchCount++;
 					}else if(DEBUG){
 						System.out.println("Value " + currentValue + " in block #" + currentBlock + " already discovered.");
+						if(currentBlock == targetBlock) {
+							System.out.println("currentBlock == targetBlock");
+							if(firstPass) {
+								System.out.println("firstPass");
+							}
+						}
 					}
+					
+					sudokuAttempt.checkBlockConditions(currentBlock);
+					
+					iterations++;
+					
+					continueSearchingWithThisValue = (!(currentBlock == targetBlock && !valueFoundInBlock) && iterations < maxIterations) || firstPass;
+
 					firstPass = false;
 					currentBlock++;
-				}while( !(currentBlock == targetBlock && !valueFoundInBlock) && iterations < maxIterations || firstPass);
+				}while(continueSearchingWithThisValue);
+				if(DEBUG) {
+					System.out.println(">>>escaping do-while");
+				}
 				
 				currentValue = currentValue % Sudoku.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
 				
 				//termination check
 				if(!mostRecentFirstPass && mostRecentvalueFound == currentValue){
-						progressHalted = true;
+					progressHalted = true;
 				}else{
 					mostRecentFirstPass = false;
 				}
 			}while(!progressHalted && iterations < maxIterations);
 			
-		if(progressHalted) {
-			System.out.println("Progress was halted because progress appeared to have halted. "
-					+ "(looped through Sudoku without progress)");
-		}else if(iterations >= maxIterations) {
-			System.out.println("Progress was halted because the max number of iterations was reached. "
-					+ "(actual iterations: " + iterations + ", max iterations: " + maxIterations + ")");
-		}
+			if(progressHalted) {
+				System.out.println("Progress was halted because progress appeared to have halted. "
+						+ "(looped through Sudoku without progress)");
+			}else if(iterations >= maxIterations) {
+				System.out.println("Progress was halted because the max number of iterations was reached. "
+						+ "(actual iterations: " + iterations + ", max iterations: " + maxIterations + ")");
+			}
+			if(DEBUG) {
+				System.out.println("\nDumping SudokuSolver variables:");
+				System.out.println("currentValue = " + currentValue);
+				System.out.println("currentBlock = " + currentBlock);
+				System.out.println("targetBlock = " + targetBlock);
+				System.out.println("progressHalted = " + progressHalted);
+				System.out.println("firstPass = " + firstPass);
+				System.out.println("mostRecentvalueFound = " + mostRecentvalueFound);
+				System.out.println("mostRecentBlock = " + mostRecentBlock);
+				System.out.println("mostRecentFirstPass = " + mostRecentFirstPass);
+				System.out.println("valueFoundInBlock = " + valueFoundInBlock);
+				
+				System.out.println("");
+			}
 			
 			
 		}catch(SudokuException e){
@@ -211,6 +244,10 @@ public class SudokuSolver {
 
 	public int getIterations() {
 		return iterations;
+	}
+	
+	public int getBlockSearchCount() {
+		return blockSearchCount;
 	}
 
 	public int getMaxIterations() {
@@ -238,7 +275,7 @@ public class SudokuSolver {
 		ArrayList<Integer> possiblePositions = new ArrayList<Integer>();
 		
 		boolean found = false;
-		if(!(sudokuAttempt.blockContains(block, value))){
+		if(!(sudokuAttempt.blockContainsConditional(block, value))){
 	        //find squares in block that can contain Number (rows and columns internally track this)
 			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
 				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
