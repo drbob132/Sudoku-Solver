@@ -2,7 +2,7 @@
  * Builder and organization aide for a Sudoku puzzle.
  * Also solves them, which is what this is built for!
  * @author drbob132
- * @version 0.3
+ * @version 1.0
  * @date 02/16/2018
  */
 

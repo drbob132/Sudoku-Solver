@@ -1,7 +1,7 @@
 /**
  * Logs a set of SudokuBlocks for the purpose of checking Sudoku rules.
  * @author drbob132
- * @version 0.3
+ * @version 1.0
  * @date 02/16/2018
  */
 

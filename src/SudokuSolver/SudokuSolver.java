@@ -4,8 +4,8 @@
  * Designed to operate in steps, so progression can be observed
  * 
  * @author drbob132
- * @version 0.3
- * @date 04/03/2018
+ * @version 1.0
+ * @date 04/10/2018
  */
 
 package SudokuSolver;
@@ -17,6 +17,7 @@ public class SudokuSolver {
 	private static final boolean DEBUG = false;
 	
 	private Sudoku sudokuAttempt;
+	private SudokuIODecoder decoderForIO;
 	
 	
 	//used for detecting when progress has halted.

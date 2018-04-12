@@ -2,7 +2,7 @@
  * Tester for SudokuSolver
  * Operates on taking argument input... file or direct arguments.
  * @author drbob132
- * @version 0.3
+ * @version 1.0
  * @date 02/16/2018
  */
 
@@ -19,6 +19,8 @@ public class SudokuSolverTester {
 		long miliseconds = 0;
 		long decimalPlace = 0;
 		final long nanoToMili = 1000000;
+
+		final int AFTER_9_PRINT_OFFSET = 7;
 		
 		//check args
 		if(args.length < 1){
@@ -29,7 +31,7 @@ public class SudokuSolverTester {
 			if(file.exists()){
 				try{
 					System.out.println("Reading file...");
-					
+					char charTemp;
 					Scanner s = new Scanner(file);
 					while(s.hasNext()){
 						puzzle += s.next();

@@ -3,7 +3,7 @@
  * One of the two must contain the number stored.
  * 
  * @author drbob132
- * @version 0.2
+ * @version 1.0
  * @date 9/19/2017
  */
 

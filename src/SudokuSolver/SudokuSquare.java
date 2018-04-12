@@ -3,7 +3,7 @@
  * Checks the rules in respect to this square and it's row/column/block.
  * Holds SudokuSquareXOR conditions that will be checked once they are fulfilled.
  * @author drbob132
- * @version 0.3
+ * @version 1.0
  * @date 02/16/2018
  */
 
