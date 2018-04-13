@@ -1,9 +1,8 @@
 /**
- * Builder and organization aide for a Sudoku puzzle.
- * Also solves them, which is what this is built for!
+ * Organization for printing, storing and also a platform to rules in solving Sudoku puzzles.
  * @author drbob132
- * @version 1.0
- * @date 02/16/2018
+ * @version 1.1
+ * @date 04/12/2018
  */
 
 package SudokuSolver;
@@ -14,11 +13,15 @@ public class Sudoku {
 	
 	private static final boolean DEBUG = false;
 	
-	public static final int SUDOKU_BLOCK_LENGTH = 3;
+	/*public static final int SUDOKU_BLOCK_LENGTH = 3;
 	public static final int SUDOKU_SIDE_LENGTH = SUDOKU_BLOCK_LENGTH * SUDOKU_BLOCK_LENGTH;
-	public static final int SUDOKU_NUMBER_OF_SQUARES = SUDOKU_SIDE_LENGTH * SUDOKU_SIDE_LENGTH;
+	public static final int SUDOKU_NUMBER_OF_SQUARES = SUDOKU_SIDE_LENGTH * SUDOKU_SIDE_LENGTH;*/
+	
+	public final int SUDOKU_BLOCK_LENGTH; //This one doesn't really get used, but whatever. It's there.
+	public final int SUDOKU_SIDE_LENGTH;
+	public final int SUDOKU_NUMBER_OF_SQUARES;
 
-	//The squares that populate blocks/rows/collumns
+	//The squares that populate blocks/rows/columns
 	private SudokuSquare[] squares;
 
 	//columns[] 0 to 8, left to right
@@ -34,8 +37,8 @@ public class Sudoku {
 	private SudokuBlock[] blocks;
 	
 	/**
-	 * Populates a Sudoku.
-	 * @param numbers Takes an int[] of 89 (9^2) digits. All must be from 1 to 9, or 0 for empty squares.
+	 * Populates a Sudoku of sudokuSideLength by sudokuSideLength.
+	 * @param numbers Takes an array of int of length sudokuSideLength^2. (ie: int[89] (9^2) digits. All must be from 1 to 9, or 0 for empty squares.)
 	 * |00 01 02|03 04 05|06 07 08|
 	 * |09 10 11|12 13 14|15 16 17|
 	 * |18 19 20|21 22 23|24 25 26|
@@ -43,11 +46,16 @@ public class Sudoku {
 	 * |27 28 29|30 31 32|33 34 35|
 	 * ...
 	 */
-	public Sudoku(int[] sudokuValues) throws SudokuException{
-		if(sudokuValues.length < SUDOKU_NUMBER_OF_SQUARES){
-			throw new SudokuException("Not enough numbers given");
-		}else if(sudokuValues.length > SUDOKU_NUMBER_OF_SQUARES){
-			throw new SudokuException("Too many numbers given.");
+	public Sudoku(int[] sudokuValues, int sudokuSideLength) throws SudokuException{
+		SUDOKU_NUMBER_OF_SQUARES = sudokuSideLength*sudokuSideLength;
+		SUDOKU_SIDE_LENGTH = sudokuSideLength;
+		SUDOKU_BLOCK_LENGTH = (int)Math.sqrt(SUDOKU_SIDE_LENGTH); //probably not used, but hey, it's there for validation here now, at least!
+		
+		if(SUDOKU_NUMBER_OF_SQUARES != SUDOKU_SIDE_LENGTH*SUDOKU_SIDE_LENGTH){
+			throw new SudokuException("Number of values given (" + sudokuValues.length + ") not equal to the number of values required. ("
+					+ SUDOKU_NUMBER_OF_SQUARES + ")");
+		}else if(SUDOKU_SIDE_LENGTH != SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH) {
+			throw new SudokuException("Sudoku is not square, and does not apply to this implementation. (side length = " + SUDOKU_SIDE_LENGTH + ")");
 		}
 		
 		populate(sudokuValues);
@@ -55,13 +63,22 @@ public class Sudoku {
 	}
 	
 	/**
-	 * Deep copies a Sudoku.
+	 * Copies a Sudoku without any condition that might be stored.
 	 * @param otherSudoku Sudoku to copy.
 	 */
-	public Sudoku(Sudoku otherSudoku){
+	public Sudoku(Sudoku otherSudoku) throws SudokuException{
+		
+		SUDOKU_NUMBER_OF_SQUARES = otherSudoku.SUDOKU_NUMBER_OF_SQUARES;
+		SUDOKU_SIDE_LENGTH = otherSudoku.SUDOKU_SIDE_LENGTH;
+		SUDOKU_BLOCK_LENGTH = otherSudoku.SUDOKU_BLOCK_LENGTH;
+		
+		if(SUDOKU_NUMBER_OF_SQUARES != SUDOKU_SIDE_LENGTH*SUDOKU_SIDE_LENGTH || SUDOKU_SIDE_LENGTH != SUDOKU_BLOCK_LENGTH*SUDOKU_BLOCK_LENGTH) {
+			throw new SudokuException("Sudoku being copied is not square, and does not apply to this implementation. (side length = " + SUDOKU_SIDE_LENGTH + ")");
+		}
+		
 		int[] sudokuValues = new int[SUDOKU_NUMBER_OF_SQUARES];
 		for(int i=0; i<SUDOKU_NUMBER_OF_SQUARES; i++){
-			sudokuValues[i] = valueAt(i);
+			sudokuValues[i] = otherSudoku.valueAt(i);
 		}
 		
 		populate(sudokuValues);
@@ -279,11 +296,11 @@ public class Sudoku {
 	 * @param position
 	 * @return
 	 */
-	private static int blockSquareIndexInverted(int block, int position) {
+	private int blockSquareIndexInverted(int block, int position) {
 		return blockSquareIndex(SUDOKU_SIDE_LENGTH - block - 1, position);
 	}
 	
-	public static int blockSquareIndex(int block, int position){
+	public int blockSquareIndex(int block, int position){
 		int index;
 		int blockOffset;
 		int rowOffset;
@@ -303,13 +320,14 @@ public class Sudoku {
 	}
 	
 	/**
-	 * Prints out the whole Sudoku as a string. 
+	 * Prints out the whole Sudoku as a string using the SudokuIODecoder as a reference. 
+	 * @param decoderForIO class for managing the formatting and translating the integers to each their own character.
 	 */
-	public String print(){
+	public String print(SudokuIODecoder decoderForIO){
 		String sudokuString = "";
 		
 		for(int i=0; i<SUDOKU_SIDE_LENGTH; i++){
-			sudokuString += rows[i].print();
+			sudokuString += rows[i].print(decoderForIO);
 			sudokuString += '\n';
 		}
 		

@@ -9,6 +9,8 @@
 package SudokuSolver;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.Scanner;
 
 public class SudokuSolverTester {
@@ -19,8 +21,6 @@ public class SudokuSolverTester {
 		long miliseconds = 0;
 		long decimalPlace = 0;
 		final long nanoToMili = 1000000;
-
-		final int AFTER_9_PRINT_OFFSET = 7;
 		
 		//check args
 		if(args.length < 1){
@@ -31,10 +31,9 @@ public class SudokuSolverTester {
 			if(file.exists()){
 				try{
 					System.out.println("Reading file...");
-					char charTemp;
 					Scanner s = new Scanner(file);
 					while(s.hasNext()){
-						puzzle += s.next();
+						puzzle += s.nextLine();
 					}
 					s.close();
 					
@@ -49,9 +48,11 @@ public class SudokuSolverTester {
 			//initialize SudokuSolver
 			System.out.println("Initializing SudokuSolver...");
 			SudokuSolver solver = new SudokuSolver();
+			SudokuIODecoder decoder = new SudokuIODecoder(/*" 123456789ABCDEFG"/*/SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
+			int sudokuSideLength = 9;
 			try{
 				//enter puzzle
-				solver.enterSudoku(puzzle);
+				solver.enterSudoku(puzzle, sudokuSideLength, decoder);
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
@@ -81,5 +82,11 @@ public class SudokuSolverTester {
 			System.out.println("(Time Elapsed: " + miliseconds + "." + decimalPlace + " ms)");
 			
 		}
+	}
+	
+	//totally ripped from StackExchange, then modified.
+	private static String readFile(Path path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(path);
+		return new String(encoded, encoding);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Solves a given sudoku, using basic rules and XOR conditions.
+ * Solves a given square sudoku, using basic rules and XOR conditions.
  * Programmed for expansion -> Sudoku N (N^2xN^2), where N is the block width (Sudoku 3 is the vanilla 9x9 sudoku)
  * Designed to operate in steps, so progression can be observed
  * 
@@ -37,15 +37,15 @@ public class SudokuSolver {
 	private boolean valueFoundInBlock; //If a value was found in current check - Used to reiterate block search when finding values and avoid early termination
 	
 	public SudokuSolver(){
-		mostRecentvalueFound = 1;
-		mostRecentBlock = 0;
-		valueFoundInBlock = true; //hacky override to get it started without potential endless loop.
-		progressHalted = false;
-		currentValue = 1;
-		currentBlock = 0;
-		targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
-		iterations = 0;
-		blockSearchCount = 0;
+		
+	}
+	
+	public SudokuSolver(String puzzle, int sudokuSideLength, SudokuIODecoder decoder) throws SudokuException{
+		try {
+			enterSudoku(puzzle, sudokuSideLength, decoder);
+		} catch(SudokuException e){
+			throw e;
+		}
 	}
 	
 	/**
@@ -53,38 +53,60 @@ public class SudokuSolver {
 	 * @param puzzle
 	 * @throws SudokuException
 	 */
-	public void enterSudoku(String puzzle) throws SudokuException{
-		int[] values = new int[Sudoku.SUDOKU_NUMBER_OF_SQUARES];
+	public void enterSudoku(String puzzle, int sudokuSideLength, SudokuIODecoder decoder) throws SudokuException{
+		decoderForIO = decoder;
+		int numberOfSquares = sudokuSideLength*sudokuSideLength;
+		mostRecentvalueFound = 1;
+		mostRecentBlock = 0;
+		valueFoundInBlock = true;
+		progressHalted = false;
+		currentValue = 1;
+		currentBlock = 0;
+		targetBlock = sudokuSideLength - 1;
+		iterations = 0;
+		blockSearchCount = 0;
+		
+		int[] values = new int[numberOfSquares];
 		int tempValue;
 		int index = 0;
-		int tempChar;
+		char tempChar;
 		
-		if(puzzle.length() < Sudoku.SUDOKU_NUMBER_OF_SQUARES){
-			throw new SudokuException("Not enough characters to enter puzzle");
+		if(puzzle.length() < numberOfSquares){
+			throw new SudokuException("" + puzzle.length() + " is not enough characters to populate a " + sudokuSideLength + "x" + sudokuSideLength 
+					+ " puzzle. (" + numberOfSquares + "required.)");
 		}
 		//not testing for too many, as I'd expect people to want to format things weirdly
 		
-		for(int i=0; index<Sudoku.SUDOKU_NUMBER_OF_SQUARES && i<puzzle.length(); i++){
+		for(int i=0; index<numberOfSquares && i<puzzle.length(); i++){
 			//get number
 			tempChar = puzzle.charAt(i);
 			
 			//scrubbing
-			if(tempChar >= '0' && tempChar <= '0' + Sudoku.SUDOKU_NUMBER_OF_SQUARES){
-				tempValue = tempChar - '0';
+			if(decoder.charIsValid(tempChar)){
+				tempValue = decoder.charToInt(tempChar);
 				
 				values[index++] = tempValue;
 			}
 		}
 		
-		if(index < Sudoku.SUDOKU_NUMBER_OF_SQUARES){
+		if(index < numberOfSquares){
 			throw new SudokuException("Not enough numbers/spaces in string to enter puzzle (index: " + index + ", argChars: " + puzzle.length() + ")");
 		}
 		
-		sudokuAttempt = new Sudoku(values);
+		sudokuAttempt = new Sudoku(values, sudokuSideLength);
+	}
+	
+	/**
+	 * replaces the SudokuIODecoder used by the Solver. This will only affect printing.
+	 * @precondition This assumes that the decoder is valid (has enough characters defined)
+	 * @param decoder a defined SudokeIODecoder that applies for the values found in the Sudoku.
+	 */
+	public void changeDecoder(SudokuIODecoder decoder){
+		decoderForIO = decoder;
 	}
 	
 	public String print(){
-		return sudokuAttempt.print();
+		return sudokuAttempt.print(decoderForIO);
 	}
 	
 	/**
@@ -157,10 +179,10 @@ public class SudokuSolver {
 		try{
 			do{ //until progress halted
 				currentBlock = 0;
-				targetBlock = Sudoku.SUDOKU_SIDE_LENGTH - 1;
+				targetBlock = sudokuAttempt.SUDOKU_SIDE_LENGTH - 1;
 				firstPass = true;
 				do{ //until this value can't be found currently
-					currentBlock = currentBlock % Sudoku.SUDOKU_SIDE_LENGTH;
+					currentBlock = currentBlock % sudokuAttempt.SUDOKU_SIDE_LENGTH;
 					valueFoundInBlock = false;
 					if(!(sudokuAttempt.blockContainsConditional(currentBlock, currentValue))){
 						if(DEBUG) {
@@ -200,7 +222,7 @@ public class SudokuSolver {
 					System.out.println(">>>escaping do-while");
 				}
 				
-				currentValue = currentValue % Sudoku.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
+				currentValue = currentValue % sudokuAttempt.SUDOKU_SIDE_LENGTH + 1; // max number would become 1
 				
 				//termination check
 				if(!mostRecentFirstPass && mostRecentvalueFound == currentValue){
@@ -239,8 +261,12 @@ public class SudokuSolver {
 		}
 	}
 	
-	public Sudoku getSudokuAttempt() {
-		return new Sudoku(sudokuAttempt);
+	public Sudoku getSudokuAttempt() throws SudokuException{
+		try {
+			return new Sudoku(sudokuAttempt);
+		}catch(SudokuException e) {
+			throw e;
+		}
 	}
 
 	public int getIterations() {
@@ -278,8 +304,8 @@ public class SudokuSolver {
 		boolean found = false;
 		if(!(sudokuAttempt.blockContainsConditional(block, value))){
 	        //find squares in block that can contain Number (rows and columns internally track this)
-			for(int i=0; i<Sudoku.SUDOKU_SIDE_LENGTH; i++){
-				if(sudokuAttempt.squareAtPositionCanBe(Sudoku.blockSquareIndex(block, i), value)){
+			for(int i=0; i<sudokuAttempt.SUDOKU_SIDE_LENGTH; i++){
+				if(sudokuAttempt.squareAtPositionCanBe(sudokuAttempt.blockSquareIndex(block, i), value)){
 					possiblePositions.add(i);
 				}
 			}
@@ -288,7 +314,7 @@ public class SudokuSolver {
 		        //    Assign Number to that square
 		        //    (XOR conditions automatically trigger on assignment, and so does completing a row/column/block)
 				try{
-					sudokuAttempt.setSquare(Sudoku.blockSquareIndex(block, possiblePositions.get(0)), value);
+					sudokuAttempt.setSquare(sudokuAttempt.blockSquareIndex(block, possiblePositions.get(0)), value);
 				}catch(SudokuException e){
 					throw e;
 				}

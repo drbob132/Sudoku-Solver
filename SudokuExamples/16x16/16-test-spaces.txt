@@ -1,0 +1,16 @@
+5	 	 	 	6	9	 	 	G	 	7	3	D	1	 	 
+ 	 	 	A	 	 	G	 	 	 	2	 	5	8	E	4
+ 	E	 	 	F	 	 	4	 	 	 	C	 	 	6	 
+4	 	9	6	 	 	 	 	B	 	 	 	 	 	2	 
+ 	 	1	 	8	 	B	 	7	A	D	 	 	 	C	 
+ 	2	8	B	 	4	 	 	 	 	 	 	A	D	 	 
+ 	 	 	 	 	2	 	 	 	 	 	8	 	B	G	 
+ 	 	 	 	C	7	 	E	2	 	 	 	3	9	F	8
+1	7	D	F	 	 	 	C	8	 	3	4	 	 	 	 
+ 	B	6	 	G	 	 	 	 	 	1	 	 	 	 	 
+ 	 	A	E	 	 	 	 	 	 	F	 	C	7	B	 
+ 	4	 	 	 	6	5	1	 	B	 	G	 	E	 	 
+ 	5	 	 	 	 	 	8	 	 	 	 	4	3	 	A
+ 	8	 	 	2	 	 	 	3	 	 	A	 	 	D	 
+D	6	4	3	 	E	 	 	 	C	 	 	G	 	 	 
+ 	 	F	C	1	D	 	B	 	 	G	2	 	 	 	6
