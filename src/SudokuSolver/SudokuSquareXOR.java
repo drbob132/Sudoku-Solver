@@ -3,11 +3,13 @@
  * One of the two must contain the number stored.
  * 
  * @author drbob132
- * @version 1.0
- * @date 9/19/2017
+ * @version 1.1
+ * @date 4/18/2018
  */
 
 package SudokuSolver;
+
+import java.util.ArrayList;
 
 public class SudokuSquareXOR {
 	private int value;
@@ -46,17 +48,16 @@ public class SudokuSquareXOR {
 		//if a square can't be the value, then the other must be
 		if(!square1.canBe(value) && !satisfied){
 			target = square2;
-			satisfied = true;
 		}else if(!square2.canBe(value) && !satisfied){
 			target = square1;
-			satisfied = true;
 		}
 
 		try{
-			if(satisfied){
+			if(target != null){
 				removeSelf();
 				if(target != null){
 					setSquare(target);
+					satisfied = true;
 				}
 			}
 		}catch(SudokuException problem){
@@ -78,13 +79,16 @@ public class SudokuSquareXOR {
 	}
 	
 	/**
-	 * Removes condition from squares
+	 * Removes this condition from squares
 	 */
 	private void removeSelf(){
 		square1.removeCondition(this);
 		square2.removeCondition(this);
 	}
-	
+
+	/**
+	 * @return True if the condition has been satisfied
+	 */
 	public boolean isSatisfied() {
 		return checkSatisfaction();
 	}
@@ -98,7 +102,19 @@ public class SudokuSquareXOR {
 		return satisfied;
 	}
 	
+	/**
+	 * @return The value this XOR implies. 
+	 */
 	public int getValue(){
 		return value;
+	}
+	
+	public ArrayList<SudokuSquare> getSquares(){
+		ArrayList<SudokuSquare> tempArray = new ArrayList<SudokuSquare>();
+		
+		tempArray.add(square1);
+		tempArray.add(square2);
+		
+		return tempArray;
 	}
 }

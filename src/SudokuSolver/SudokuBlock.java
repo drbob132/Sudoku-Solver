@@ -2,8 +2,8 @@
  * Logs a set of SudokuBlocks for the purpose of checking Sudoku rules.
  * Also tracks SudokuSquareXOR conditions contained in the Block.
  * @author drbob132
- * @version 1.0
- * @date 02/16/2018
+ * @version 1.1
+ * @date 04/18/2018
  */
 
 package SudokuSolver;
@@ -92,6 +92,51 @@ public class SudokuBlock extends SudokuRow {
 		}
 	}
 	
+	/**
+	 * Returns the SudokuSquares found in SudokuSquareXORs in this block. Each adjacent pair belongs to an XOR.
+	 * These XORs are in order of creation. 
+	 * Typically used in conjunction with getXORValues() for the value that is implied in those squares, in the same order.
+	 * @return The SudokuSquares found in SudokuSquareXORs
+	 */
+	public SudokuSquare[] getXORSquares(){
+		SudokuSquare[] xorSquareArray = new SudokuSquare[xorConditions.size()*2];
+		ArrayList<SudokuSquare> squareList;
+		int squareIndex = 0;
+		
+		for(SudokuSquareXOR xor : xorConditions) {
+			squareList = xor.getSquares();
+			for(SudokuSquare square : squareList) {
+				xorSquareArray[squareIndex++] = square;
+			}
+		}
+		
+		return xorSquareArray;
+	}
+	
+	/**
+	 * Returns the values found in SudokuSquareXORs in this block.
+	 * These XORs are in order of creation. 
+	 * Typically used in conjunction with getXORSquares() for the squares that the value is implied in, in the same order.
+	 * @return The values that the SudokuSquareXORs are to assign.
+	 */
+	public int[] getXORValues() {
+		int[] xorValueArray = new int[xorConditions.size()];
+		int value;
+		int squareIndex = 0;
+		
+		for(SudokuSquareXOR xor : xorConditions) {
+			value = xor.getValue();
+			xorValueArray[squareIndex++] = value;
+		}
+		
+		return xorValueArray;
+	}
+	
+	/**
+	 * Checks the XOR conditions held in this object, and completes any conditions that are satisfied, then clears any which are no longer required.
+	 * @throws SudokuException In the event that an XOR can be satisfied, but cannot set the target square because the it has been
+	 *  filled with another number. This is typically the result of an incorrectly placed XOR, or an incorrectly filled square.
+	 */
 	public void checkConditions() throws SudokuException{
 		int i = 0;
 		int startingSize = xorConditions.size();

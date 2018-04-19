@@ -2,8 +2,8 @@
  * Tester for SudokuSolver
  * Operates on taking argument input... file or direct arguments.
  * @author drbob132
- * @version 1.0
- * @date 02/16/2018
+ * @version 1.2
+ * @date 04/18/2018
  */
 
 package SudokuSolver;
@@ -11,6 +11,7 @@ package SudokuSolver;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SudokuSolverTester {
@@ -48,8 +49,8 @@ public class SudokuSolverTester {
 			//initialize SudokuSolver
 			System.out.println("Initializing SudokuSolver...");
 			SudokuSolver solver = new SudokuSolver();
-			SudokuIODecoder decoder = new SudokuIODecoder(/*" 123456789ABCDEFG"/*/SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
-			int sudokuSideLength = 9;
+			SudokuIODecoder decoder = new SudokuIODecoder(" 123456789ABCDEFG"/*/SudokuIODecoder.TYPICAL9X9_SPACEBLANKS*/);
+			int sudokuSideLength = 16;
 			try{
 				//enter puzzle
 				solver.enterSudoku(puzzle, sudokuSideLength, decoder);
@@ -76,6 +77,11 @@ public class SudokuSolverTester {
 			System.out.println("Number of times blocks were searched: " + solver.getBlockSearchCount());
 			System.out.println("Number of iterations: " + solver.getIterations());
 			System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
+			
+			ArrayList<String> xorConditions = solver.getPrintableXORConditions();
+			for(String description : xorConditions) {
+				System.out.println("[" + description + "]");
+			}
 
 			miliseconds = (endTime - startTime)/nanoToMili;
 			decimalPlace = (endTime - startTime)%nanoToMili;

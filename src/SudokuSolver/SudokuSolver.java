@@ -4,8 +4,8 @@
  * Designed to operate in steps, so progression can be observed
  * 
  * @author drbob132
- * @version 1.0
- * @date 04/10/2018
+ * @version 1.1
+ * @date 04/18/2018
  */
 
 package SudokuSolver;
@@ -359,5 +359,9 @@ public class SudokuSolver {
 		}
 		
 		return found;
+	}
+	
+	public ArrayList<String> getPrintableXORConditions(){
+		return sudokuAttempt.getPrintableXORConditions();
 	}
 }

@@ -1,12 +1,15 @@
 /**
- * Organization for printing, storing and also a platform to rules in solving Sudoku puzzles.
+ * Framework for printing, storing and also a platform to rules in solving symmetrical Sudoku puzzles. 
+ * This framework is capable of growing to different scales, not just 9x9 (scale 3). 
+ * ie: At scale 2, a 4x4 sudoku can be filled. At scale 4, a 16x16 sudoku can be filled. At scale N, a (N^2)x(N^2) can be filled.
  * @author drbob132
- * @version 1.1
- * @date 04/12/2018
+ * @version 1.2
+ * @date 04/18/2018
  */
 
 package SudokuSolver;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Sudoku {
@@ -300,6 +303,12 @@ public class Sudoku {
 		return blockSquareIndex(SUDOKU_SIDE_LENGTH - block - 1, position);
 	}
 	
+	/**
+	 * Adjusts input for file/arg input
+	 * @param block
+	 * @param position
+	 * @return
+	 */
 	public int blockSquareIndex(int block, int position){
 		int index;
 		int blockOffset;
@@ -317,6 +326,68 @@ public class Sudoku {
 		//get position in block plus offsets
 		index = position%SUDOKU_BLOCK_LENGTH + rowOffset + blockOffset;
 		return index;
+	}
+	
+	public int getRowNumber(SudokuSquare square) {
+		int squarePos = getSquarePosition(square);
+		if(squarePos < 0) { //Square not found
+			return squarePos;
+		}
+		return squarePos % SUDOKU_SIDE_LENGTH;
+	}
+	
+	public int getColumnNumber(SudokuSquare square) {
+		int squarePos = getSquarePosition(square);
+		if(squarePos < 0) { //Square not found
+			return squarePos;
+		}
+		return squarePos / SUDOKU_SIDE_LENGTH;
+	}
+	
+	public int getSquarePosition(SudokuSquare square) {
+		int squarePos = -1;
+		for(int i = 0; i < squares.length && squarePos < 0; i++) {
+			if(square == squares[i]) {
+				squarePos = i;
+			}
+		}
+		return squarePos;
+	}
+	
+	/**
+	 * @return A list of descriptions of the XORs found in this Sudoku.
+	 */
+	public ArrayList<String> getPrintableXORConditions(){
+		//"X must be at either (col 1, row 1) or (col 2, row 3)"
+		ArrayList<String> listOfXORDescriptions = new ArrayList<String>();
+		String description;
+		int[] xorValues;
+		SudokuSquare[] xorSquares;
+		int rowNumber;
+		int colNumber;
+		
+		for(SudokuBlock block : blocks) {
+			xorValues = block.getXORValues();
+			xorSquares = block.getXORSquares();
+			
+			if(DEBUG) { //the length of xorSquares must be double the length of xorValues.
+				assert xorValues.length*2 == xorSquares.length;
+			}
+			
+			for(int i=0; i<xorValues.length; i++) {
+				rowNumber = getRowNumber(xorSquares[i*2]);
+				colNumber = getColumnNumber(xorSquares[i*2]);
+				description = "" + xorValues[i] + " must be at either (col " + colNumber + ", row " + rowNumber;
+
+				rowNumber = getRowNumber(xorSquares[i*2+1]);
+				colNumber = getColumnNumber(xorSquares[i*2+1]);
+				description +=  ") or (col " + colNumber + ", row " + rowNumber + ")";
+				
+				listOfXORDescriptions.add(description);
+			}
+		}
+		
+		return listOfXORDescriptions;
 	}
 	
 	/**
