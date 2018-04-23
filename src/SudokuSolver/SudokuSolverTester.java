@@ -15,10 +15,16 @@
  * *todo*--quiet,--silent: Makes the solver cease any output to console. Best used when specifying an output file.
  * *todo*--debug: Enables debug messages.
  * *todo*--help: Prints out possible arguments.
- * *todo*--verify: Checks the given puzzle for conflicts, then attempts to solve the puzzle, then makes a final report.
+ * *todo*--verify: Checks the given puzzle for conflicts or formatting issues, then attempts to solve the puzzle if possible, then makes a final report.
  * *todo*--verbose: Prints out more stats than you might normally need.
  * *todo*--input-encoding: Used to specify the character format for the input puzzle. When not specified, the solver will use the default for the size of sudoku. *todo*(specified below)
  * *todo*--print-encoding: Used when you want the puzzle printed in a format other than the input encoding.
+ * *todo*--step: Runs the solver until one value (or more) is found. 
+ * *todo*--max-steps: Runs the solver for X steps.
+ * *todo*--print-each-step: Prints the Sudoku after each step until it is finished.
+ * 
+ * *todo*--max-iterations, --iterations: *Advanced users only* Specifies the max number of iterations the solver will run. (This would typically need to be specified if the solver terminates because of an iteration limit, or ) -1 for unlimited.
+ * 
  * *todo* [last argument] is the puzzle in numbers or the path to a file which contains the puzzle, with the same format.
  */
 
