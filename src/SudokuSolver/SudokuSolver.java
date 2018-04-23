@@ -290,7 +290,7 @@ public class SudokuSolver {
 	}
 
 	/**
-	 * 
+	 * **unimplemented**
 	 * @return position of most recent square found
 	 */
 	public int solveStep(){
@@ -359,6 +359,31 @@ public class SudokuSolver {
 		}
 		
 		return found;
+	}
+	
+	/**
+	 * Checks each square of the puzzle.
+	 * 
+	 * Result Codes are as follows:
+	 * -1: Puzzle could not be initialized or has not been entered. If it has been entered, there was likely a format error.
+	 * 0: Puzzle is complete and without error.
+	 * 1: Puzzle is incomplete, but without any known error.
+	 * 2: Puzzle holds conflicting values.
+	 * @return A code specifying describing the result, as specified in the description of this function.
+	 */
+	public int validate() {
+		resultCode = -100;
+		if(sudokuAttempt == null) {
+			resultCode = -1;
+		}else {
+			resultCode = sudokuAttempt.validate();
+		}
+		
+		return resultCode;
+	}
+	
+	public int compare(Sudoku otherPuzzle) {
+		
 	}
 	
 	public ArrayList<String> getPrintableXORConditions(){
