@@ -106,6 +106,39 @@ public class SudokuRow {
 	}
 	
 	/**
+	 * Checks each square of the puzzle.
+	 * note: This will report the greatest code found.
+	 * 
+	 * Result Codes are as follows:
+	 * 0: Puzzle is complete and without error.
+	 * 1: Puzzle is incomplete, but without any known error.
+	 * 2: Puzzle holds conflicting values.
+	 * 3: Puzzle holds values beyond the scope the of puzzle.
+	 * @return A code specifying describing the result, as specified in the description of this function.
+	 */
+	public int validate() {
+		int resultCode = 0;
+		int tempCode = 0;
+		boolean[] numberFound = new boolean[squares.length];
+		
+		for(SudokuSquare square : squares) {
+			tempCode = 0;
+			
+			if(square.getValue() > squares.length || square.getValue() < 0) {
+				tempCode = 3;
+			}else if(square.getValue() != 0 && numberFound[square.getValue()-1]) {
+				tempCode = 2;
+			}
+			
+			if(tempCode > resultCode) {
+				resultCode = tempCode;
+			}
+		}
+		
+		return resultCode;
+	}
+	
+	/**
 	 * Checks if this row/block/column is completed, or one away.
 	 * If one away, it will complete it.
 	 * @return True if the row/block/column is completed.

@@ -3,8 +3,8 @@
  * This framework is capable of growing to different scales, not just 9x9 (scale 3). 
  * ie: At scale 2, a 4x4 sudoku can be filled. At scale 4, a 16x16 sudoku can be filled. At scale N, a (N^2)x(N^2) can be filled.
  * @author drbob132
- * @version 1.2
- * @date 04/18/2018
+ * @version 1.3
+ * @date 04/23/2018
  */
 
 package SudokuSolver;
@@ -239,6 +239,12 @@ public class Sudoku {
 		return squares[position].isEmpty();
 	}
 	
+	/**
+	 * Sets a empty square to contain the value.
+	 * @param position The position in the sudoku, as defined by blockSquareIndex 
+	 * @param value The value to insert to the square
+	 * @throws SudokuException If the square is not empty, this exception will be thrown.
+	 */
 	public void setSquare(int position, int value) throws SudokuException{
 		try{
 			squares[position].set(value);
@@ -299,8 +305,17 @@ public class Sudoku {
 	 * @param position
 	 * @return
 	 */
-	private int blockSquareIndexInverted(int block, int position) {
+	/*private int blockSquareIndexInverted(int block, int position) {
 		return blockSquareIndex(SUDOKU_SIDE_LENGTH - block - 1, position);
+	}*/
+	
+	/**
+	 * Returns the square index number as defined in this Sudoku using the row and columns.
+	 * @param row The row number of the desired square (Starting at zero)
+	 * @param column The column number of the desired square (Starting at zero)
+	 */
+	public int rowColumnIndex(int row, int column) {
+		return (row * SUDOKU_SIDE_LENGTH) + column;
 	}
 	
 	/**
@@ -326,6 +341,41 @@ public class Sudoku {
 		//get position in block plus offsets
 		index = position%SUDOKU_BLOCK_LENGTH + rowOffset + blockOffset;
 		return index;
+	}
+	
+	/**
+	 * Checks each square of the puzzle.
+	 * note: This will report the greatest code found.
+	 * 
+	 * Result Codes are as follows:
+	 * 0: Puzzle is complete and without error.
+	 * 1: Puzzle is incomplete, but without any known error.
+	 * 2: Puzzle holds conflicting values.
+	 * 3: Puzzle holds values beyond the scope the of puzzle.
+	 * @return A code specifying describing the result, as specified in the description of this function.
+	 */
+	public int validate() {
+		int resultCode = 0;
+		int tempCode = 0;
+		for(SudokuRow row : rows) {
+			tempCode = row.validate();
+			if(tempCode > resultCode) {
+				resultCode = tempCode;
+			}
+		}
+		for(SudokuColumn column : columns) {
+			tempCode = column.validate();
+			if(tempCode > resultCode) {
+				resultCode = tempCode;
+			}
+		}
+		for(SudokuBlock block : blocks) {
+			tempCode = block.validate();
+			if(tempCode > resultCode) {
+				resultCode = tempCode;
+			}
+		}
+		return resultCode;
 	}
 	
 	public int getRowNumber(SudokuSquare square) {

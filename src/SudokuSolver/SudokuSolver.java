@@ -4,8 +4,8 @@
  * Designed to operate in steps, so progression can be observed
  * 
  * @author drbob132
- * @version 1.1
- * @date 04/18/2018
+ * @version 1.2
+ * @date 04/23/2018
  */
 
 package SudokuSolver;
@@ -369,13 +369,12 @@ public class SudokuSolver {
 	 * 0: Puzzle is complete and without error.
 	 * 1: Puzzle is incomplete, but without any known error.
 	 * 2: Puzzle holds conflicting values.
+	 * 3: Puzzle holds values beyond the scope the of puzzle.
 	 * @return A code specifying describing the result, as specified in the description of this function.
 	 */
 	public int validate() {
-		resultCode = -100;
-		if(sudokuAttempt == null) {
-			resultCode = -1;
-		}else {
+		int resultCode = -1;
+		if(sudokuAttempt != null) {
 			resultCode = sudokuAttempt.validate();
 		}
 		

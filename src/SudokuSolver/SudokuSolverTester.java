@@ -90,6 +90,9 @@ public class SudokuSolverTester {
 			System.out.println("Printing puzzle before attempt...");
 			System.out.print(solver.print());
 			
+			System.out.println("\nAttempting puzzle Validation...");
+			System.out.println("Code: " + solver.validate() + "\n");
+			
 			startTime = System.nanoTime();
 			try{
 				//attempt puzzle
