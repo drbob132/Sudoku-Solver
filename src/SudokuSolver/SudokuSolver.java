@@ -75,7 +75,7 @@ public class SudokuSolver {
 			throw new SudokuException("" + puzzle.length() + " is not enough characters to populate a " + sudokuSideLength + "x" + sudokuSideLength 
 					+ " puzzle. (" + numberOfSquares + "required.)");
 		}
-		//not testing for too many, as I'd expect people to want to format things weirdly
+		//not testing for too many, as Sudoku formats are all over when looking online...
 		
 		for(int i=0; index<numberOfSquares && i<puzzle.length(); i++){
 			//get number
@@ -107,17 +107,6 @@ public class SudokuSolver {
 	
 	public String print(){
 		return sudokuAttempt.print(decoderForIO);
-	}
-	
-	public Sudoku getSudokuCopy() {
-		Sudoku puzzle = null;
-		try {
-			puzzle =  new Sudoku(sudokuAttempt);
-		} catch (SudokuException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return puzzle;
 	}
 	
 	/**
@@ -272,12 +261,16 @@ public class SudokuSolver {
 		}
 	}
 	
-	public Sudoku getSudokuAttempt() throws SudokuException{
+	public Sudoku getSudokuAttempt(){
+		Sudoku puzzle = null;
 		try {
-			return new Sudoku(sudokuAttempt);
-		}catch(SudokuException e) {
-			throw e;
+			puzzle =  new Sudoku(sudokuAttempt);
+		} catch (SudokuException e) {
+			if(DEBUG) {
+				e.printStackTrace();
+			}
 		}
+		return puzzle;
 	}
 
 	public int getIterations() {
@@ -302,9 +295,8 @@ public class SudokuSolver {
 
 	/**
 	 * **unimplemented**
-	 * @return position of most recent square found
 	 */
-	public int solveStep(){
+	public void solveStep(){
 		return -1;
 	}
 	

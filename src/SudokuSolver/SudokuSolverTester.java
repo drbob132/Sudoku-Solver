@@ -86,7 +86,7 @@ public class SudokuSolverTester {
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
-			Sudoku copyOfOriginal = solver.getSudokuCopy();
+			Sudoku copyOfOriginal = solver.getSudokuAttempt();
 			//print puzzle
 			System.out.println("Printing puzzle before attempt...");
 			System.out.print(solver.print());
