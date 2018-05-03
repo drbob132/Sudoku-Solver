@@ -38,7 +38,7 @@ import java.util.Scanner;
 
 public class SudokuSolverTester {
 	public static void main(String[] args){
-		final boolean DEBUG = true;
+		final boolean DEBUG = false;
 		String puzzle="";
 		long startTime = 0;
 		long endTime = 0;
@@ -78,14 +78,15 @@ public class SudokuSolverTester {
 			//initialize SudokuSolver
 			System.out.println("Initializing SudokuSolver...");
 			SudokuSolver solver = new SudokuSolver();
-			SudokuIODecoder decoder = new SudokuIODecoder(" 123456789ABCDEFG"/*/SudokuIODecoder.TYPICAL9X9_SPACEBLANKS*/);
-			int sudokuSideLength = 16;
+			SudokuIODecoder decoder = new SudokuIODecoder(/*" 123456789ABCDEFG"/*/SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
+			int sudokuSideLength = 9;
 			try{
 				//enter puzzle
 				solver.enterSudoku(puzzle, sudokuSideLength, decoder);
 			}catch(SudokuException e){
 				System.out.println(e.getMessage());
 			}
+			Sudoku copyOfOriginal = solver.getSudokuCopy();
 			//print puzzle
 			System.out.println("Printing puzzle before attempt...");
 			System.out.print(solver.print());
@@ -109,6 +110,8 @@ public class SudokuSolverTester {
 			System.out.println("Number of times blocks were searched: " + solver.getBlockSearchCount());
 			System.out.println("Number of iterations: " + solver.getIterations());
 			System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
+			System.out.println("Result code when compared to original (2 expected): " + solver.compare(copyOfOriginal));
+			System.out.println("Validation Code after attempt: " + solver.validate());
 			
 			ArrayList<String> xorConditions = solver.getPrintableXORConditions();
 			for(String description : xorConditions) {

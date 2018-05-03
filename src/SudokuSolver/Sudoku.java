@@ -94,7 +94,7 @@ public class Sudoku {
 		populateBlocks();
 	}
 	
-	private int valueAt(int position){
+	public int valueAt(int position){
 		return squares[position].getValue();
 	}
 	
@@ -375,6 +375,58 @@ public class Sudoku {
 				resultCode = tempCode;
 			}
 		}
+		return resultCode;
+	}
+	
+	/**
+	 * Compares the cells of other puzzle to this one.
+	 * 
+	 * Result Codes are as follows:
+	 * 0: The other puzzle's cells are identical to this puzzle.
+	 * 1: The other puzzle is a more complete version of this one.
+	 * 2: This puzzle is a more complete version of the other one.
+	 * 3: The two puzzles do not overlap.
+	 * 4: The puzzles are of different dimensions.
+	 * 
+	 * @param otherPuzzle The other puzzle to compare to this one.
+	 * @return A code specifying describing the result, as specified in the description of this function.
+	 */
+	public int compare(Sudoku otherPuzzle) {
+		int resultCode = -1;
+		boolean dimensionsCompatible;
+		boolean thisExistsInOtherPuzzle = true;
+		boolean otherPuzzleExistsInThis = true;
+		
+		int thisValue;
+		int otherValue;
+		
+		dimensionsCompatible = (SUDOKU_NUMBER_OF_SQUARES == otherPuzzle.SUDOKU_NUMBER_OF_SQUARES);
+		
+		for(int i=0; dimensionsCompatible && i < SUDOKU_NUMBER_OF_SQUARES && (thisExistsInOtherPuzzle || otherPuzzleExistsInThis); i++) {
+			thisValue = valueAt(i);
+			otherValue = otherPuzzle.valueAt(i);
+			if(thisValue == 0 && otherValue != 0) {
+				otherPuzzleExistsInThis = false;
+			}else if(thisValue != 0 && otherValue == 0) {
+				thisExistsInOtherPuzzle = false;
+			}else if(thisValue != otherValue) {
+				otherPuzzleExistsInThis = false;
+				thisExistsInOtherPuzzle = false;
+			}
+		}
+		
+		if(!dimensionsCompatible) { //The puzzles are of different types and can't be compared.
+			resultCode = 4;
+		}else if(thisExistsInOtherPuzzle && otherPuzzleExistsInThis) { //The puzzles are identical
+			resultCode = 0;
+		}else if(thisExistsInOtherPuzzle) { //The other puzzle is a more complete version of this one.
+			resultCode = 1;
+		}else if(otherPuzzleExistsInThis) { //This puzzle is a more complete version of the other one.
+			resultCode = 2;
+		}else { //The two puzzles do not overlap.
+			resultCode = 3;
+		}
+		
 		return resultCode;
 	}
 	

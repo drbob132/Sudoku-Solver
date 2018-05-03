@@ -124,6 +124,9 @@ public class SudokuRow {
 		for(SudokuSquare square : squares) {
 			tempCode = 0;
 			
+			if(square.getValue() == 0) {
+				tempCode = 1;
+			}
 			if(square.getValue() > squares.length || square.getValue() < 0) {
 				tempCode = 3;
 			}else if(square.getValue() != 0 && numberFound[square.getValue()-1]) {

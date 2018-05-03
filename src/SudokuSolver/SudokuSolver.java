@@ -109,6 +109,17 @@ public class SudokuSolver {
 		return sudokuAttempt.print(decoderForIO);
 	}
 	
+	public Sudoku getSudokuCopy() {
+		Sudoku puzzle = null;
+		try {
+			puzzle =  new Sudoku(sudokuAttempt);
+		} catch (SudokuException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return puzzle;
+	}
+	
 	/**
 	 * @return The details of any remaining stored conditions that assert a number's possible positions.
 	 */
@@ -381,8 +392,24 @@ public class SudokuSolver {
 		return resultCode;
 	}
 	
+	
+	
+	/**
+	 * Compares the cells of other puzzle to the one contained in this solver.
+	 * 
+	 * Result codes are as follows:
+	 * -1: One or both of the puzzles are not initialized.
+	 * 0: The other puzzle's cells are identical to this puzzle.
+	 * 1: The other puzzle is a more complete version of this one.
+	 * 2: This puzzle is a more complete version of the other one.
+	 * 3: The two puzzles do not overlap.
+	 * 4: The puzzles are of different dimensions.
+	 * 
+	 * @param otherPuzzle The other puzzle to compare to this one.
+	 * @return A code specifying describing the result, as specified in the description of this function.
+	 */
 	public int compare(Sudoku otherPuzzle) {
-		
+		return sudokuAttempt.compare(otherPuzzle);
 	}
 	
 	public ArrayList<String> getPrintableXORConditions(){
