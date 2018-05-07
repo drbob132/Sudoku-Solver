@@ -30,7 +30,6 @@ public class SudokuSolver {
 	private int blockSearchCount;
 	
 	//tracking current state (in object context, as this will have step functionality
-	private ArrayList<ArrayList> valuesToFind;
 	private int currentValue;
 	private int currentBlock;
 	private int targetBlock; //Identifies the last block to search; the block that the most recent value was found in
@@ -46,6 +45,7 @@ public class SudokuSolver {
 		} catch(SudokuException e){
 			throw e;
 		}
+		
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class SudokuSolver {
 			throw new SudokuException("" + puzzle.length() + " is not enough characters to populate a " + sudokuSideLength + "x" + sudokuSideLength 
 					+ " puzzle. (" + numberOfSquares + "required.)");
 		}
-		//not testing for too many, as Sudoku formats are all over when looking online...
+		//not testing for too many conditions, as Sudoku formats are all over when looking online...
 		
 		for(int i=0; index<numberOfSquares && i<puzzle.length(); i++){
 			//get number
@@ -384,7 +384,9 @@ public class SudokuSolver {
 		return resultCode;
 	}
 	
-	
+	public String getValidateMessage(int code) {
+		return Sudoku.getValidateMessage(code);
+	}
 	
 	/**
 	 * Compares the cells of other puzzle to the one contained in this solver.
@@ -402,6 +404,10 @@ public class SudokuSolver {
 	 */
 	public int compare(Sudoku otherPuzzle) {
 		return sudokuAttempt.compare(otherPuzzle);
+	}
+	
+	public String getCompareMessage(int code) {
+		return Sudoku.getCompareMessage(code);
 	}
 	
 	public ArrayList<String> getPrintableXORConditions(){

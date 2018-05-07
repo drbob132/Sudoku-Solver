@@ -12,8 +12,6 @@ package SudokuSolver;
 import java.util.ArrayList;
 
 public class SudokuSquare {
-
-	private static final boolean DEBUG = false;
 	
 	private int value;
 	private SudokuRow row;

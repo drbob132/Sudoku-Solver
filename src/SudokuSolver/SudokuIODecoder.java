@@ -11,8 +11,8 @@ public class SudokuIODecoder {
 
 	public static final String TYPICAL9X9_ZEROBLANKS = "0123456789";
 	public static final String TYPICAL9X9_SPACEBLANKS = " 123456789";
-	public static final String TYPICAL16X16_SPACEBLANKS = " 0123456789ABCDEF";
-	
+	public static final String TYPICAL16X16_SPACEBLANKS_STARTATZERO = " 0123456789ABCDEF";
+	public static final String TYPICAL16X16_SPACEBLANKS_STARTATONE = " 123456789ABCDEFG";
 	private char delimiter;
 	private String index;
 	private boolean useDelimiter;

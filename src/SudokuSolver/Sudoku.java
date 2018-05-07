@@ -378,6 +378,21 @@ public class Sudoku {
 		return resultCode;
 	}
 	
+	public static String getValidateMessage(int code) {
+		switch(code){
+			case 0:
+				return "Puzzle is complete and without error.";
+			case 1:
+				return "Puzzle is incomplete, but without any known error.";
+			case 2:
+				return "Puzzle holds conflicting values.";
+			case 3:
+				return "Puzzle holds values beyond the scope the of puzzle.";
+			default:
+				return "Validation code not defined.";
+		}
+	}
+	
 	/**
 	 * Compares the cells of other puzzle to this one.
 	 * 
@@ -385,7 +400,7 @@ public class Sudoku {
 	 * 0: The other puzzle's cells are identical to this puzzle.
 	 * 1: The other puzzle is a more complete version of this one.
 	 * 2: This puzzle is a more complete version of the other one.
-	 * 3: The two puzzles do not overlap.
+	 * 3: The two puzzles do not overlap. They are different.
 	 * 4: The puzzles are of different dimensions.
 	 * 
 	 * @param otherPuzzle The other puzzle to compare to this one.
@@ -423,11 +438,28 @@ public class Sudoku {
 			resultCode = 1;
 		}else if(otherPuzzleExistsInThis) { //This puzzle is a more complete version of the other one.
 			resultCode = 2;
-		}else { //The two puzzles do not overlap.
+		}else { //The two puzzles do not overlap. They are different.
 			resultCode = 3;
 		}
 		
 		return resultCode;
+	}
+	
+	public static String getCompareMessage(int code) {
+		switch(code){
+			case 0:
+				return "The other puzzle's cells are identical to this puzzle.";
+			case 1:
+				return "The other puzzle is a more complete version of this one.";
+			case 2:
+				return "This puzzle is a more complete version of the other one.";
+			case 3:
+				return "The two puzzles do not overlap. They are different.";
+			case 4:
+				return "The puzzles are of different dimensions.";
+			default:
+				return "Comparison code not defined.";
+		}
 	}
 	
 	public int getRowNumber(SudokuSquare square) {
