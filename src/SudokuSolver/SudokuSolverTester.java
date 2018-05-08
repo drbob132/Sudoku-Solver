@@ -35,23 +35,50 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SudokuSolverTester {
+	private static final boolean DEBUG = false;
+	private static String puzzleContent = "";
+	private static String invalidArguments = "";
+	private static long startTime = 0;
+	private static long endTime = 0;
+	private static long miliseconds = 0;
+	private static long decimalPlace = 0;
+	//
+	private static final long nanoToMili = 1000000;
+	//defaults to typical size of a sudoku
+	private static int sudokuSideLength = 9;
+	private static SudokuIODecoder decoder = null;
+	
+	private static boolean errorInProcess = false;
+	private static boolean printDetails = true;
+	
+	private static SudokuSolver solver;
+	private static Sudoku copyOfOriginal;
+	
+	
 	public static void main(String[] args){
-		final boolean DEBUG = false;
-		String puzzle = "";
-		String invalidArguments = "";
-		long startTime = 0;
-		long endTime = 0;
-		long miliseconds = 0;
-		long decimalPlace = 0;
-		//
-		final long nanoToMili = 1000000;
-		//defaults to typical size of a sudoku
-		int sudokuSideLength = 9;
-		SudokuIODecoder decoder = null;
+		readArgs(args);
 		
-		boolean printDetails = true;
+		if(!errorInProcess) {
+			try {
+				puzzleContent = getPuzzleContent(args[args.length - 1]);
+			}catch(IndexOutOfBoundsException e) {
+				System.out.println("Please submit a puzzle in the arguments! (At the end)");
+				errorInProcess = true;
+			}
+		}
+		if(!errorInProcess) {
+			initializeSolver();
+		}
+		if(!errorInProcess) {
+			runSolver();
+			if(printDetails) {
+				printDetails();
+			}
+		}
 		
-		//check args
+	}
+	
+	private static void readArgs(String[] args) {
 		if(DEBUG) {
 			for(int i=0; i<args.length; i++) {
 				System.out.println("args[" + i + "] = " + args[i]);
@@ -79,103 +106,113 @@ public class SudokuSolverTester {
 							i++;
 						}catch(IndexOutOfBoundsException e) {
 							invalidArguments += args[i] + " expects an int afterwards.\n";
+							errorInProcess = true;
 						}catch(NumberFormatException e) {
 							invalidArguments += args[i] + " could not parse \"" + args[i+1] + " as an integer.\n";
+							errorInProcess = true;
 						}
 						break;
 					default:
 						invalidArguments += args[i] + " is not a known argument.\n";
+						errorInProcess = true;
 				}
 					
 			}
-			
-			//puzzle get
-			File file = new File(args[args.length - 1]);
-			//if it's a file, go get it and read puzzle
-			if(file.exists()){
-				try{
-					if(DEBUG) {
-						System.out.println("Reading file...");
-					}
-					Scanner s = new Scanner(file);
-					while(s.hasNext()){
-						puzzle += s.nextLine();
-					}
-					s.close();
-					
-				}catch(IOException e){
-					System.out.println(e.getMessage());
-				}
-			}else{ //else, it's assumed to be a puzzle outright
-				if(DEBUG) {
-					System.out.println("Reading argument...");
-				}
-				puzzle = args[args.length - 1];
-			}
-			
-			//initialize SudokuSolver
-			System.out.println("Initializing SudokuSolver...");
-			SudokuSolver solver = new SudokuSolver();
-			
-			//defaulting decoder
-			if(decoder == null) {
-				switch(sudokuSideLength) {
-					case 9:
-						decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
-						break;
-					case 16:
-						decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL16X16_SPACEBLANKS_STARTATONE);
-						break;
-					default:
-						decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
-				}
-			}
-			
-			try{
-				//enter puzzle
-				solver.enterSudoku(puzzle, sudokuSideLength, decoder);
-			}catch(SudokuException e){
-				System.out.println(e.getMessage());
-			}
-			Sudoku copyOfOriginal = solver.getSudokuAttempt();
-			//print puzzle
-			System.out.println("Printing puzzle before attempt...");
-			System.out.print(solver.print());
-			
-			System.out.println("\nAttempting puzzle Validation...");
-			System.out.println("Validation result: " + solver.getValidateMessage(solver.validate()) + "\n");
-			
-			startTime = System.nanoTime();
-			try{
-				//attempt puzzle
-				System.out.println("Attempting to solve puzzle...");
-				solver.solveFull();
-			}catch(SudokuException e){
-				System.out.println(e.getMessage());
-			}
-			endTime = System.nanoTime();
-
-			if(printDetails) {
-				//print result
-				System.out.println("Printing puzzle after attempt...");
-				System.out.print(solver.print());
-				System.out.println("Number of times blocks were searched: " + solver.getBlockSearchCount());
-				System.out.println("Number of iterations: " + solver.getIterations());
-				System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
-				System.out.println("Compared to original: " + solver.getCompareMessage(solver.compare(copyOfOriginal)));
-				System.out.println("Validation after attempt: " + solver.getValidateMessage(solver.validate()));
-			
-				ArrayList<String> xorConditions = solver.getPrintableXORConditions();
-				for(String description : xorConditions) {
-					System.out.println("[" + description + "]");
-				}
-
-				miliseconds = (endTime - startTime)/nanoToMili;
-				decimalPlace = (endTime - startTime)%nanoToMili;
-				System.out.println("(Time Elapsed: " + miliseconds + "." + decimalPlace + " ms)");
-				System.out.println(invalidArguments);
-			}
-			
 		}
+	}
+	
+	private static String getPuzzleContent(String arg) {
+		File Puzzlefile = new File(arg);
+		String content = "";
+		//if it's a file, go get it and read puzzle
+		if(Puzzlefile.exists()){
+			try{
+				if(DEBUG) {
+					System.out.println("Reading file...");
+				}
+				Scanner s = new Scanner(Puzzlefile);
+				while(s.hasNext()){
+					content += s.nextLine();
+				}
+				s.close();
+				
+			}catch(IOException e){
+				System.out.println(e.getMessage());
+				errorInProcess = true;
+			}
+		}else{ //else, it's assumed to be a puzzle outright
+			if(DEBUG) {
+				System.out.println("Reading argument...");
+			}
+			content = arg;
+		}
+		return content;
+	}
+	
+	private static void initializeSolver() {
+		System.out.println("Initializing SudokuSolver...");
+		solver = new SudokuSolver();
+		
+		//defaulting decoder
+		if(decoder == null) {
+			switch(sudokuSideLength) {
+				case 9:
+					decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
+					break;
+				case 16:
+					decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL16X16_SPACEBLANKS_STARTATONE);
+					break;
+				default:
+					decoder = new SudokuIODecoder(SudokuIODecoder.TYPICAL9X9_SPACEBLANKS);
+			}
+		}
+		
+		try{
+			//enter puzzle
+			solver.enterSudoku(puzzleContent, sudokuSideLength, decoder);
+		}catch(SudokuException e){
+			System.out.println(e.getMessage());
+			errorInProcess = true;
+		}
+	}
+	
+	private static void runSolver() {
+		copyOfOriginal = solver.getSudokuAttempt();
+		//print puzzle
+		System.out.println("Printing puzzle before attempt...");
+		System.out.print(solver.print());
+		
+		System.out.println("\nAttempting puzzle Validation...");
+		System.out.println("Validation result: " + solver.getValidateMessage(solver.validate()) + "\n");
+		
+		startTime = System.nanoTime();
+		try{
+			//attempt puzzle
+			System.out.println("Attempting to solve puzzle...");
+			solver.solveFull();
+		}catch(SudokuException e){
+			System.out.println(e.getMessage());
+			errorInProcess = true;
+		}
+		endTime = System.nanoTime();
+	}
+	private static void printDetails() {
+		System.out.println("Printing puzzle after attempt...");
+		System.out.print(solver.print());
+		System.out.println("Number of times blocks were searched: " + solver.getBlockSearchCount());
+		System.out.println("Number of iterations: " + solver.getIterations());
+		System.out.println("Number of XOR conditions remaining: " + solver.getXORConditionCount());
+		System.out.println("Compared to original: " + solver.getCompareMessage(solver.compare(copyOfOriginal)));
+		System.out.println("Validation after attempt: " + solver.getValidateMessage(solver.validate()));
+	
+		ArrayList<String> xorConditions = solver.getPrintableXORConditions();
+		for(String description : xorConditions) {
+			System.out.println("[" + description + "]");
+		}
+
+		miliseconds = (endTime - startTime)/nanoToMili;
+		decimalPlace = (endTime - startTime)%nanoToMili;
+		System.out.println("(Time Elapsed: " + miliseconds + "." + decimalPlace + " ms)");
+		System.out.println(invalidArguments);
 	}
 }
