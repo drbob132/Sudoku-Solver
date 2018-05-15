@@ -34,6 +34,7 @@ public class SudokuSolver {
 	private int currentBlock;
 	private int targetBlock; //Identifies the last block to search; the block that the most recent value was found in
 	private boolean valueFoundInBlock; //If a value was found in current check - Used to reiterate block search when finding values and avoid early termination
+	private String message;
 	
 	public SudokuSolver(){
 		
@@ -65,6 +66,7 @@ public class SudokuSolver {
 		targetBlock = sudokuSideLength - 1;
 		iterations = 0;
 		blockSearchCount = 0;
+		message = "Progress hasn't even started!";
 		
 		int[] values = new int[numberOfSquares];
 		int tempValue;
@@ -107,6 +109,10 @@ public class SudokuSolver {
 	
 	public String print(){
 		return sudokuAttempt.print(decoderForIO);
+	}
+
+	public String print(SudokuIODecoder decoder){
+		return sudokuAttempt.print(decoder);
 	}
 	
 	/**
@@ -233,11 +239,11 @@ public class SudokuSolver {
 			}while(!progressHalted && iterations < maxIterations);
 			
 			if(progressHalted) {
-				System.out.println("Progress was halted because progress appeared to have halted. "
-						+ "(looped through Sudoku without progress)");
+				message = "Progress was halted because progress appeared to have halted. "
+						+ "(looped through Sudoku without progress)";
 			}else if(iterations >= maxIterations) {
-				System.out.println("Progress was halted because the max number of iterations was reached. "
-						+ "(actual iterations: " + iterations + ", max iterations: " + maxIterations + ")");
+				message = "Progress was halted because the max number of iterations was reached. "
+						+ "(actual iterations: " + iterations + ", max iterations: " + maxIterations + ")";
 			}
 			if(DEBUG) {
 				System.out.println("\nDumping SudokuSolver variables:");
@@ -412,5 +418,9 @@ public class SudokuSolver {
 	
 	public ArrayList<String> getPrintableXORConditions(){
 		return sudokuAttempt.getPrintableXORConditions();
+	}
+	
+	public String getMessage() {
+		return message;
 	}
 }
